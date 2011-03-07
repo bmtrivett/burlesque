@@ -69,6 +69,10 @@ public class Tables {
 	 */
 	public String startingLocation;
 	/**
+	 * The location that the literal table starts.
+	 */
+	public Integer startOfLiteralTable;
+	/**
 	 * Sets the max symbols.
 	 */
 	public final Integer MAX_SYMBOLS = 100;

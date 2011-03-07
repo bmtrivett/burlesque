@@ -15,15 +15,15 @@ import java.util.Set;
  * @author Ben Trivett, Bryant Schuck, Gerard Louis
  */
 public class PassOne {
-/**
- * This is the main method of the PassOne class and performs all 
- * operations in the class.
- * 
- * @param input
- * @param machineTables
- * @return
- * @throws IOException
- */
+	/**
+	 * This is the main method of the PassOne class and performs all operations
+	 * in the class.
+	 * 
+	 * @param input
+	 * @param machineTables
+	 * @return
+	 * @throws IOException
+	 */
 	public static String run(String input, Tables machineTables)
 			throws IOException {
 		int lineCounter = 1;
@@ -135,8 +135,7 @@ public class PassOne {
 					if (!overSubstring(read, 0, 6).equals("      ")) {
 						return "The .ENT psuedo-op on line " + lineCounter
 								+ " cannot have a label.";
-					}
-					else {
+					} else {
 						String comma = ",";
 						String entry = "";
 						String[] tempEntryArray = new String[2];
@@ -144,62 +143,68 @@ public class PassOne {
 						int startingIndex = 17;
 						int numOperands = 1;
 						while (indexOfComma != -1) {
-							entry = overSubstring(read, startingIndex, indexOfComma);
+							entry = overSubstring(read, startingIndex,
+									indexOfComma);
 							if (entry.contains(" ")) {
-								return "The .ENT operand on line " + lineCounter
-										+ " has a space in it.";
+								return "The .ENT operand on line "
+										+ lineCounter + " has a space in it.";
 							}
-							machineTables.externalSymbolTable.put(entry, tempEntryArray);
+							machineTables.externalSymbolTable.put(entry,
+									tempEntryArray);
 							entry = read.substring(indexOfComma + 1);
 							startingIndex = indexOfComma + 1;
 							indexOfComma = entry.indexOf(comma);
 							if (numOperands > 4) {
-								return "The .ENT psuedo-op on line " + lineCounter
+								return "The .ENT psuedo-op on line "
+										+ lineCounter
 										+ " has more than 4 operands.";
 							}
 							numOperands++;
 						}
-						entry = overSubstring(read, startingIndex, read.length());
+						entry = overSubstring(read, startingIndex,
+								read.length());
 						if (entry.contains(" ")) {
 							return "The .ENT operand on line " + lineCounter
 									+ " has a space in it.";
 						}
-						machineTables.externalSymbolTable.put(entry, tempEntryArray);
+						machineTables.externalSymbolTable.put(entry,
+								tempEntryArray);
 					}
-				}
-				else if (entext.equals(".EXT ")) {
+				} else if (entext.equals(".EXT ")) {
 					if (!overSubstring(read, 0, 6).equals("      ")) {
 						return "The .EXT psuedo-op on line " + lineCounter
 								+ " cannot have a label.";
-					}
-					else {
+					} else {
 						String comma = ",";
 						String entry = "";
 						int indexOfComma = read.indexOf(comma);
 						int startingIndex = 17;
 						int numOperands = 1;
 						while (indexOfComma != -1) {
-							entry = overSubstring(read, startingIndex, indexOfComma);
+							entry = overSubstring(read, startingIndex,
+									indexOfComma);
 							if (entry.contains(" ")) {
-								return "The .EXT operand on line " + lineCounter
-										+ " has a space in it.";
+								return "The .EXT operand on line "
+										+ lineCounter + " has a space in it.";
 							}
-							startingIndex = indexOfComma+1;
+							startingIndex = indexOfComma + 1;
 							indexOfComma = entry.indexOf(comma);
 							if (numOperands > 4) {
-								return "The .EXT psuedo-op on line " + lineCounter
+								return "The .EXT psuedo-op on line "
+										+ lineCounter
 										+ " has more than 4 operands.";
 							}
 							numOperands++;
 						}
-						entry = overSubstring(read, startingIndex, read.length());
+						entry = overSubstring(read, startingIndex,
+								read.length());
 						if (entry.contains(" ")) {
 							return "The .EXT operand on line " + lineCounter
 									+ " has a space in it.";
 						}
 					}
 				}
-				
+
 				// Check for a label and add it to the symbol table.
 				else if (!firstWord.equals("      ")) {
 					String[] tempString = new String[2];
@@ -247,9 +252,9 @@ public class PassOne {
 							if (temp.charAt(0) == '#') {
 								try {
 									Integer.parseInt(temp.substring(1), 10);
-								} catch (Exception e){
+								} catch (Exception e) {
 									return "Decimal out of range on line "
-									+ lineCounter + ".";
+											+ lineCounter + ".";
 								}
 								Integer decimalOperand = Integer.parseInt(
 										temp.substring(1), 10);
@@ -296,13 +301,14 @@ public class PassOne {
 						tempString[0] = Utility
 								.DecimalValueToHex(machineTables.locationCounter);
 						tempString[1] = Utility
-								.BooleanToString(machineTables.isSymbolRelative);
+								.BooleanToString(machineTables.isRelative);
 					}
 
 					// Check if the symbol already exists in the table.
 					if (machineTables.symbolTable.containsKey(firstWord)) {
-						return "Multiple definition of symbol " + firstWord.trim()
-								+ " on line " + lineCounter + ".";
+						return "Multiple definition of symbol "
+								+ firstWord.trim() + " on line " + lineCounter
+								+ ".";
 					}
 
 					// Store the label in the symbol table.
@@ -335,7 +341,8 @@ public class PassOne {
 								addr = overSubstring(read, 17, read.length());
 							} else {
 								int indexofcomma = read.indexOf(',');
-								addr = overSubstring(read, indexofcomma+1, read.length());
+								addr = overSubstring(read, indexofcomma + 1,
+										read.length());
 							}
 							if (addr.length() > 0) {
 								if (addr.charAt(0) == '#'
@@ -390,8 +397,7 @@ public class PassOne {
 											addr = addr + " ";
 											i++;
 										}
-									}
-									else if (addr.length() > 6) {
+									} else if (addr.length() > 6) {
 										return "The symbol length is greater than 6.";
 									}
 									Integer[] pgoffsetArray = new Integer[2];
@@ -569,8 +575,8 @@ public class PassOne {
 			temp = overSubstring(read, 17, 23);
 		}
 		if (machineTables.symbolTable.containsKey(temp)) {
-			int symbolAddress = Utility.HexToDecimalValue(
-					machineTables.symbolTable.get(temp)[0]);
+			int symbolAddress = Utility
+					.HexToDecimalValue(machineTables.symbolTable.get(temp)[0]);
 			int originAddress = Utility.HexToDecimalValue(origin);
 			if (symbolAddress < originAddress) {
 				return "The .END operand points to a location that is before"
@@ -618,22 +624,24 @@ public class PassOne {
 		}
 
 		// Must be within maximum number of literals allowed.
-		count = machineTables.literalTable.size();
-		if (count > machineTables.MAX_LITERALS) {
+		int litTableSize = machineTables.literalTable.size();
+		if (litTableSize > machineTables.MAX_LITERALS) {
 			return "Maximum number of literals(" + machineTables.MAX_LITERALS
-					+ ") exceeded: " + count + ".";
+					+ ") exceeded: " + litTableSize + ".";
 		}
 
 		// Set locations in the literal table.
+		machineTables.startOfLiteralTable = machineTables.locationCounter;
 		String keys[] = machineTables.literalTable.keySet().toArray(
 				new String[machineTables.literalTable.size()]);
 		String tempVal[];
-		while (count > 0) {
-			tempVal = machineTables.literalTable.remove(keys[count - 1]);
+		count = 0;
+		while (count < litTableSize) {
+			tempVal = machineTables.literalTable.remove(keys[count]);
 			tempVal[1] = Utility
 					.DecimalValueToHex(machineTables.locationCounter);
-			machineTables.literalTable.put(keys[count - 1].trim(), tempVal);
-			count--;
+			machineTables.literalTable.put(keys[count].trim(), tempVal);
+			count++;
 			machineTables.locationCounter++;
 		}
 		machineTables.locationCounter--;
@@ -675,23 +683,24 @@ public class PassOne {
 
 		// Symbol table correction.
 		String tempArray2[] = machineTables.symbolTable.keySet().toArray(
-				new String[machineTables.symbolTable.size()]);
+				new String[0]);
 		for (String tempStr : tempArray2) {
 			machineTables.symbolTable.put(tempStr.trim(),
 					machineTables.symbolTable.get(tempStr));
 		}
-		
+
 		// Check location of all symbols defined in external symbol table.
 		if (machineTables.externalSymbolTable.size() > 0) {
-			Set<String> setOfEntryKeys = machineTables.externalSymbolTable.keySet();
+			Set<String> setOfEntryKeys = machineTables.externalSymbolTable
+					.keySet();
 			Iterator<String> iteratorOfEntryKeys = setOfEntryKeys.iterator();
 			while (iteratorOfEntryKeys.hasNext()) {
 				String entryKey = iteratorOfEntryKeys.next();
 				if (machineTables.symbolTable.containsKey(entryKey)) {
-					String[] entryArray = machineTables.symbolTable.get(entryKey);
+					String[] entryArray = machineTables.symbolTable
+							.get(entryKey);
 					machineTables.symbolTable.put(entryKey, entryArray);
-				}
-				else {
+				} else {
 					return "The .ENT symbol " + entryKey + " is undefined.";
 				}
 			}
@@ -710,16 +719,17 @@ public class PassOne {
 		// Finish with no errors by returning null.
 		return null;
 	}
-	
-/**
- * This method performs the same function as the Substring method, 
- * however if it reads null, overSubstring will replace the null with a space character.
- * 
- * @param str
- * @param x
- * @param y
- * @return
- */
+
+	/**
+	 * This method performs the same function as the Substring method, however
+	 * if it reads null, overSubstring will replace the null with a space
+	 * character.
+	 * 
+	 * @param str
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	private static String overSubstring(String str, int x, int y) {
 		Boolean exceptions = true;
 		int z = 0;
@@ -740,9 +750,10 @@ public class PassOne {
 		}
 		return temp;
 	}
+
 	/**
-	 * This method checks if the address is 
-	 * on the same page as the location counter and returns true/false.
+	 * This method checks if the address is on the same page as the location
+	 * counter and returns true/false.
 	 * 
 	 * @param addr
 	 * @param locationCounter
@@ -756,14 +767,14 @@ public class PassOne {
 				.substring(0, 7);
 		return (addrBinary.equals(locationCounterBinary));
 	}
-	
-/**
- * This method checks that the 
- * final operand can be an address for certain relocatable symbols.
- * 
- * @param operation
- * @return
- */
+
+	/**
+	 * This method checks that the final operand can be an address for certain
+	 * relocatable symbols.
+	 * 
+	 * @param operation
+	 * @return
+	 */
 	private static boolean isAddrOperation(String operation) {
 		boolean result = false;
 		if (operation.contains("BR") || operation.contains("JSR")

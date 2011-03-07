@@ -48,9 +48,9 @@ public class PassTwo {
 		// Use the label of the .ORIG as the name of the program.
 		String name = overSubstring(read, 0, 6);
 
-		// Use starting location determined from the .END operation in pass one.
+		// Use starting location determined from the .ORIG operation in pass one.
 		String start = machineTables.symbolTable.get(name)[0];
-
+		
 		// Determine the length of the program's footprint by subtracting the
 		// starting location from the final location counter.
 		int adress = Utility.HexToDecimalValue(start);
@@ -60,9 +60,17 @@ public class PassTwo {
 		if (length.equals("0000")) {
 			return "The program has a length of 0";
 		}
+		
+		// Starting location cannot be inside the literal table
+		if (Utility.HexToDecimalValue(machineTables.startingLocation) >= machineTables.startOfLiteralTable){
+			return "Starting location cannot be inside of the literal table.";
+		}
+		
 		if (length.equals("FFFF") && start.equals("0000") && machineTables.isRelative) {
 			return "The program has a length is greater than xFFFF";
 		}
+		
+		// Set the header letter based on relocation/absolute
 		String header = "H";
 		if (machineTables.isRelative){
 			header = "G";
@@ -1129,7 +1137,7 @@ public class PassTwo {
 						}
 						bin = Utility.convertToTwosComplement(bin);
 
-						// .BLKW operands can only be symbols, hex, or decimal.
+						// .FILL operands can only be symbols, hex, or decimal.
 					} else {
 						return "Operand has invalid formatting on line "
 								+ lineCounter + ".";
