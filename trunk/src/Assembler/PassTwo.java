@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
-
 /**
  * This class contains the output method that executes the second pass of
  * assembly.
@@ -17,8 +16,8 @@ import java.util.Iterator;
  */
 public class PassTwo {
 	/**
-	 * This is the main method of the PassTwo
-	 * class and performs all of the operations in the class.
+	 * This is the main method of the PassTwo class and performs all of the
+	 * operations in the class.
 	 * 
 	 * @param objOutName
 	 * @param ppOutName
@@ -49,31 +48,33 @@ public class PassTwo {
 		// Use the label of the .ORIG as the name of the program.
 		String name = overSubstring(read, 0, 6);
 
-		// Use starting location determined from the .ORIG operation in pass one.
+		// Use starting location determined from the .ORIG operation in pass
+		// one.
 		String start = machineTables.symbolTable.get(name)[0];
-		
+
 		// Determine the length of the program's footprint by subtracting the
 		// starting location from the final location counter.
 		int adress = Utility.HexToDecimalValue(start);
 		String length = Utility.DecimalValueToHex(machineTables.locationCounter
 				- adress + 1);
-		
+
 		if (length.equals("0000")) {
 			return "The program has a length of 0";
 		}
-		
+
 		// Starting location cannot be inside the literal table
-		if (Utility.HexToDecimalValue(machineTables.startingLocation) >= machineTables.startOfLiteralTable){
+		if (Utility.HexToDecimalValue(machineTables.startingLocation) >= machineTables.startOfLiteralTable) {
 			return "Starting location cannot be inside of the literal table.";
 		}
-		
-		if (length.equals("FFFF") && start.equals("0000") && machineTables.isRelative) {
+
+		if (length.equals("FFFF") && start.equals("0000")
+				&& machineTables.isRelative) {
 			return "The program has a length is greater than xFFFF";
 		}
-		
+
 		// Set the header letter based on relocation/absolute
 		String header = "H";
-		if (machineTables.isRelative){
+		if (machineTables.isRelative) {
 			header = "G";
 		}
 
@@ -320,7 +321,9 @@ public class PassTwo {
 									+ " does not have an absolute value on line "
 									+ lineCounter + ".";
 						}
-						if (bin < -16 || bin > 31) {
+						if ((temp[2].equals("0") && (bin < 0 || bin > 31))
+								|| (temp[2].equals("1") && (bin < -16 || bin > 15))
+								|| (temp[2].equals("2") && (bin < 0 || bin > 7))) {
 							return "imm5 out of range on line " + lineCounter
 									+ ".";
 						}
@@ -1259,9 +1262,11 @@ public class PassTwo {
 		new File("intermediate.txt").deleteOnExit();
 		return null;
 	}
+
 	/**
-	 * This method performs the same function as the Substring method, however if it
-	 * reads null, overSubstring will replace the null with a space character.
+	 * This method performs the same function as the Substring method, however
+	 * if it reads null, overSubstring will replace the null with a space
+	 * character.
 	 * 
 	 * @param str
 	 * @param x

@@ -72,18 +72,36 @@ public class PassOne {
 			return "Unused space has non-whitespace contents on line "
 					+ lineCounter + ".";
 		}
+		
+		// Remove in line comments and write them to comments.txt.
+		String comment = ";";
+		int index4 = read.indexOf(comment);
+		if (index4 != -1) {
+			String inLineComment = read.substring(index4);
+			bufferedWriterComments.write(lineCounter + "\t-"
+					+ inLineComment);
+			bufferedWriterComments.newLine();
+			read = overSubstring(read, 0, index4);
+		}
 
 		// Determine the starting location and whether it is relative or
 		// absolute.
-		String location = "    ";
-		if (read.length() > 18) {
-			location = overSubstring(read, 18, 22);
+		String location = "     ";
+		if (read.length() > 17) {
+			location = overSubstring(read, 17, 22);
 		}
 		machineTables.isSymbolRelative = false;
-		if (location.equals("    ")) {
+		if (location.equals("     ")) {
 			machineTables.locationCounter = 0;
 			machineTables.isRelative = true;
 		} else {
+			if(!(location.charAt(17) == 'x')){
+				return "The .ORIG value must be in hex.";
+			}
+			location = location.substring(1).trim();
+			if (location.length() > 4){
+				return "Hex value out of range in .ORIG.";
+			}
 			machineTables.locationCounter = Utility.HexToDecimalValue(location);
 			machineTables.isRelative = false;
 		}
@@ -118,8 +136,8 @@ public class PassOne {
 				}
 
 				// Remove in line comments and write them to comments.txt.
-				String comment = ";";
-				int index4 = read.indexOf(comment);
+				comment = ";";
+				index4 = read.indexOf(comment);
 				if (index4 != -1) {
 					String inLineComment = read.substring(index4);
 					bufferedWriterComments.write(lineCounter + "\t-"
@@ -228,7 +246,7 @@ public class PassOne {
 
 				// Check for a label and add it to the symbol table.
 				else if (!firstWord.equals("      ")) {
-					String[] tempString = new String[2];
+					String[] tempString = new String[3];
 
 					// Labels must not include blanks.
 					if (firstWord.trim().contains(" ")) {
@@ -239,7 +257,7 @@ public class PassOne {
 					// Labels can't start with x or R.
 					if (firstWord.charAt(0) == 'x'
 							|| firstWord.charAt(0) == 'R') {
-						return "Label has either a x or R as the first letter on line "
+						return "Label cannot have either a x or R as the first letter on line "
 								+ lineCounter + ".";
 					}
 
@@ -288,6 +306,7 @@ public class PassOne {
 										.DecimalValueToHex(Utility
 												.convertToTwosComplement(decimalOperand));
 								tempString[1] = "0";
+								tempString[2] = "1";
 
 								// Check if it is a hex value.
 							} else if (temp.charAt(0) == 'x') {
@@ -300,6 +319,7 @@ public class PassOne {
 												.HexToDecimalValue(temp
 														.substring(1)));
 								tempString[1] = "0";
+								tempString[2] = "0";
 
 								// Check if it is a register.
 							} else if (temp.charAt(0) == 'R') {
@@ -312,6 +332,7 @@ public class PassOne {
 								tempString[0] = Utility
 										.DecimalValueToHex(count);
 								tempString[1] = "0";
+								tempString[2] = "2";
 							} else {
 								return "Symbol must be previously defined for a .EQU operation.";
 							}
@@ -323,6 +344,7 @@ public class PassOne {
 								.DecimalValueToHex(machineTables.locationCounter);
 						tempString[1] = Utility
 								.BooleanToString(machineTables.isRelative);
+						tempString[2] = "3";
 					}
 
 					// Check if the symbol already exists in the table.
@@ -579,8 +601,8 @@ public class PassOne {
 					+ lineCounter + ").";
 		}
 		// Remove in line comments and write them to comments.txt.
-		String comment = ";";
-		int index4 = read.indexOf(comment);
+		comment = ";";
+		index4 = read.indexOf(comment);
 		if (index4 != -1) {
 			String inLineComment = read.substring(index4);
 			bufferedWriterComments.write(lineCounter + "\t-" + inLineComment);
