@@ -221,7 +221,7 @@ public class Tables {
 		psuedoOpTable.put(".END ", 1);
 		psuedoOpTable.put(".STRZ", 1);
 		psuedoOpTable.put(".FILL", 1);
-		psuedoOpTable.put(".ENT ", 1);
-		psuedoOpTable.put(".EXT ", 1);
+		psuedoOpTable.put(".ENT ", 4);
+		psuedoOpTable.put(".EXT ", 4);
 	}
 }
