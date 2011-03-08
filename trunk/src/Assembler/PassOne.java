@@ -95,7 +95,7 @@ public class PassOne {
 			machineTables.locationCounter = 0;
 			machineTables.isRelative = true;
 		} else {
-			if(!(location.charAt(17) == 'x')){
+			if(!(location.charAt(0) == 'x')){
 				return "The .ORIG value must be in hex.";
 			}
 			location = location.substring(1).trim();
