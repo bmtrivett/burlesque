@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 
 
 /**
@@ -982,9 +983,12 @@ public class PassTwo {
 
 				// Check if it is a pseudo operation.
 			} else if (machineTables.psuedoOpTable.containsKey(operations)) {
-
+				if (operations.equals(".ENT ") || operations.equals(".EXT ")) {
+					
+				}
 				// The number of operands must match the operation's formating.
-				if (machineTables.psuedoOpTable.get(operations) != op.length) {
+				if (!(operations.equals(".ENT ") || operations.equals(".EXT ")) &&
+						(machineTables.psuedoOpTable.get(operations) != op.length)) {
 					return "The pseudo operation has an incorrect number of operands on line "
 							+ lineCounter + ".";
 				}
@@ -1213,6 +1217,31 @@ public class PassTwo {
 			prettyPrint.write("(" + hexAdress + ") " + textRecord + " "
 					+ binary + " (lit)");
 			prettyPrint.newLine();
+		}
+		
+		// Write the external symbol table to the end of the file
+		Iterator<String> keySetIterator = machineTables.
+											externalSymbolTable.keySet().iterator();
+		while (keySetIterator.hasNext()) {
+			String symbolKey = keySetIterator.next();
+			String[] symbol = machineTables.externalSymbolTable.get(symbolKey);
+			
+			// Write to object file.
+			pTextRecord = "S" + symbolKey + "=" + symbol[0];
+			bufferedWriter.write(pTextRecord);
+			bufferedWriter.newLine();
+			
+			// Write to pretty print.
+			String spaces = "";
+			int spaceLength = 21 - symbolKey.length();
+			while (spaceLength > 0) {
+				spaces += " ";
+				spaceLength--;
+			}
+			prettyPrint.write("(" + symbol[0] + ") " + symbolKey + spaces
+					+ " (ent)");
+			prettyPrint.newLine();
+			
 		}
 
 		// Write the end record to the object file.

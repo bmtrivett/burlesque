@@ -143,29 +143,39 @@ public class PassOne {
 						int startingIndex = 17;
 						int numOperands = 1;
 						while (indexOfComma != -1) {
-							entry = overSubstring(read, startingIndex,
-									indexOfComma);
-							if (entry.contains(" ")) {
-								return "The .ENT operand on line "
-										+ lineCounter + " has a space in it.";
+							numOperands++;
+							if ((indexOfComma-startingIndex) == 0) {
+								return "An operand must precede the comma.";
 							}
-							machineTables.externalSymbolTable.put(entry,
-									tempEntryArray);
-							entry = read.substring(indexOfComma + 1);
-							startingIndex = indexOfComma + 1;
-							indexOfComma = entry.indexOf(comma);
 							if (numOperands > 4) {
 								return "The .ENT psuedo-op on line "
 										+ lineCounter
 										+ " has more than 4 operands.";
 							}
-							numOperands++;
+							entry = overSubstring(read, startingIndex,
+									indexOfComma);
+							if (entry.contains(" ")) {
+								return "The operand \"" + entry + "\" on line " 
+								+ lineCounter + " has a space in it.";
+							}
+							if (entry.length() > 6) {
+								return "The operand \"" + entry + "\" on line "
+										+ lineCounter + " is longer than 6 characters.";
+							}
+							machineTables.externalSymbolTable.put(entry,
+									tempEntryArray);
+							startingIndex = indexOfComma + 1;
+							indexOfComma = read.indexOf(comma, startingIndex);
 						}
 						entry = overSubstring(read, startingIndex,
 								read.length());
 						if (entry.contains(" ")) {
-							return "The .ENT operand on line " + lineCounter
-									+ " has a space in it.";
+							return "The operand \"" + entry + "\" on line " 
+									+ lineCounter + " has a space in it.";
+						}
+						if (entry.length() > 6) {
+							return "The operand \"" + entry + "\" on line "
+									+ lineCounter + " is longer than 6 characters.";
 						}
 						machineTables.externalSymbolTable.put(entry,
 								tempEntryArray);
@@ -181,26 +191,37 @@ public class PassOne {
 						int startingIndex = 17;
 						int numOperands = 1;
 						while (indexOfComma != -1) {
+							numOperands++;
+							if ((indexOfComma-startingIndex) == 0) {
+								return "An operand must precede the comma.";
+							}
+							if (numOperands > 4) {
+								return "The .EXT psuedo-op on line "
+										+ lineCounter
+										+ " has more than 4 operands.";
+							}
 							entry = overSubstring(read, startingIndex,
 									indexOfComma);
 							if (entry.contains(" ")) {
 								return "The .EXT operand on line "
 										+ lineCounter + " has a space in it.";
 							}
-							startingIndex = indexOfComma + 1;
-							indexOfComma = entry.indexOf(comma);
-							if (numOperands > 4) {
-								return "The .EXT psuedo-op on line "
-										+ lineCounter
-										+ " has more than 4 operands.";
+							if (entry.length() > 6) {
+								return "The operand " + entry + " on line "
+										+ lineCounter + " is longer than 6 characters.";
 							}
-							numOperands++;
+							startingIndex = indexOfComma + 1;
+							indexOfComma = read.indexOf(comma, startingIndex);
 						}
 						entry = overSubstring(read, startingIndex,
 								read.length());
 						if (entry.contains(" ")) {
 							return "The .EXT operand on line " + lineCounter
 									+ " has a space in it.";
+						}
+						if (entry.length() > 6) {
+							return "The operand " + entry + " on line "
+									+ lineCounter + " is longer than 6 characters.";
 						}
 					}
 				}
@@ -699,9 +720,9 @@ public class PassOne {
 				if (machineTables.symbolTable.containsKey(entryKey)) {
 					String[] entryArray = machineTables.symbolTable
 							.get(entryKey);
-					machineTables.symbolTable.put(entryKey, entryArray);
+					machineTables.externalSymbolTable.put(entryKey, entryArray);
 				} else {
-					return "The .ENT symbol " + entryKey + " is undefined.";
+					return "The .ENT symbol \"" + entryKey + "\" is undefined.";
 				}
 			}
 		}
