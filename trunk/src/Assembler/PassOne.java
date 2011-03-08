@@ -72,14 +72,13 @@ public class PassOne {
 			return "Unused space has non-whitespace contents on line "
 					+ lineCounter + ".";
 		}
-		
+
 		// Remove in line comments and write them to comments.txt.
 		String comment = ";";
 		int index4 = read.indexOf(comment);
 		if (index4 != -1) {
 			String inLineComment = read.substring(index4);
-			bufferedWriterComments.write(lineCounter + "\t-"
-					+ inLineComment);
+			bufferedWriterComments.write(lineCounter + "\t-" + inLineComment);
 			bufferedWriterComments.newLine();
 			read = overSubstring(read, 0, index4);
 		}
@@ -95,11 +94,11 @@ public class PassOne {
 			machineTables.locationCounter = 0;
 			machineTables.isRelative = true;
 		} else {
-			if(!(location.charAt(0) == 'x')){
+			if (!(location.charAt(17) == 'x')) {
 				return "The .ORIG value must be in hex.";
 			}
 			location = location.substring(1).trim();
-			if (location.length() > 4){
+			if (location.length() > 4) {
 				return "Hex value out of range in .ORIG.";
 			}
 			machineTables.locationCounter = Utility.HexToDecimalValue(location);
@@ -120,11 +119,18 @@ public class PassOne {
 		read = file.readLine();
 		lineCounter++;
 
-		// Read operations until there is a .END or the source file ends.
-		while (!overSubstring(read, 9, 14).equals(".END ")) {
+		// Read in operations until there is a .END or the source file ends.
+		while (read.length() > 0) {
 
 			// If the line is not a comment
 			if (read.charAt(0) != ';') {
+
+				if (read.length() < 10) {
+					break;
+				}
+				if (overSubstring(read, 9, 14).equals(".END ")) {
+					break;
+				}
 
 				// Check unused space
 				if (read.length() > 16) {
@@ -162,7 +168,7 @@ public class PassOne {
 						int numOperands = 1;
 						while (indexOfComma != -1) {
 							numOperands++;
-							if ((indexOfComma-startingIndex) == 0) {
+							if ((indexOfComma - startingIndex) == 0) {
 								return "An operand must precede the comma.";
 							}
 							if (numOperands > 4) {
@@ -173,12 +179,13 @@ public class PassOne {
 							entry = overSubstring(read, startingIndex,
 									indexOfComma);
 							if (entry.contains(" ")) {
-								return "The operand \"" + entry + "\" on line " 
-								+ lineCounter + " has a space in it.";
+								return "The operand \"" + entry + "\" on line "
+										+ lineCounter + " has a space in it.";
 							}
 							if (entry.length() > 6) {
 								return "The operand \"" + entry + "\" on line "
-										+ lineCounter + " is longer than 6 characters.";
+										+ lineCounter
+										+ " is longer than 6 characters.";
 							}
 							machineTables.externalSymbolTable.put(entry,
 									tempEntryArray);
@@ -188,12 +195,13 @@ public class PassOne {
 						entry = overSubstring(read, startingIndex,
 								read.length());
 						if (entry.contains(" ")) {
-							return "The operand \"" + entry + "\" on line " 
+							return "The operand \"" + entry + "\" on line "
 									+ lineCounter + " has a space in it.";
 						}
 						if (entry.length() > 6) {
 							return "The operand \"" + entry + "\" on line "
-									+ lineCounter + " is longer than 6 characters.";
+									+ lineCounter
+									+ " is longer than 6 characters.";
 						}
 						machineTables.externalSymbolTable.put(entry,
 								tempEntryArray);
@@ -210,7 +218,7 @@ public class PassOne {
 						int numOperands = 1;
 						while (indexOfComma != -1) {
 							numOperands++;
-							if ((indexOfComma-startingIndex) == 0) {
+							if ((indexOfComma - startingIndex) == 0) {
 								return "An operand must precede the comma.";
 							}
 							if (numOperands > 4) {
@@ -226,7 +234,8 @@ public class PassOne {
 							}
 							if (entry.length() > 6) {
 								return "The operand " + entry + " on line "
-										+ lineCounter + " is longer than 6 characters.";
+										+ lineCounter
+										+ " is longer than 6 characters.";
 							}
 							startingIndex = indexOfComma + 1;
 							indexOfComma = read.indexOf(comma, startingIndex);
@@ -239,7 +248,8 @@ public class PassOne {
 						}
 						if (entry.length() > 6) {
 							return "The operand " + entry + " on line "
-									+ lineCounter + " is longer than 6 characters.";
+									+ lineCounter
+									+ " is longer than 6 characters.";
 						}
 					}
 				}
