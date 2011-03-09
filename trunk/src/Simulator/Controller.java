@@ -3,6 +3,7 @@ package Simulator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -31,16 +32,16 @@ public class Controller implements ControllerInterface {
 	private EndOrRestart end;
 
 	// Consolidate all instruction text.
-	private String getFileInst = "Enter location of file you wish to load:\n";
+	private String getFileInst = "Enter the location of batch file you wish to load:\n";
 	private String runOrOptionsInst = "Select an option:\n"
-		+ "A) Choose run mode.\nB) Set instruction limit.\n";
+			+ "A) Choose run mode.\nB) Set instruction limit.\n";
 	private String modeSelectInst = "Select run mode:\n"
-		+ "A) Quiet mode.\nB) Trace mode.\nC) Step mode.\n";
+			+ "A) Quiet mode.\nB) Trace mode.\nC) Step mode.\n";
 	private String optionsInst = "New instruction limit (1 to 2,147,483,647 "
-		+ "or -1 for DEFAULT):\n";
+			+ "or -1 for DEFAULT):\n";
 	private String endInst = "Execution over, please choose an option:\n"
-		+ "A) Load another file.\n" + "B) Reset Wileven Machine.\n"
-		+ "C) Quit.\n";
+			+ "A) Load another file.\n" + "B) Reset Wileven Machine.\n"
+			+ "C) Quit.\n";
 	private String execInst = "Press enter to start ";
 
 	// Step mode requires a field to keep track of the number of instructions
@@ -103,9 +104,9 @@ public class Controller implements ControllerInterface {
 	private void displayAllMemory() {
 		// Memory header
 		MachineMain.machineView
-		.outputText("\tMemory Address\tMemory Contents\n");
+				.outputText("\tMemory Address\tMemory Contents\n");
 		MachineMain.machineView
-		.outputText("\t--------------\t\t---------------\n");
+				.outputText("\t--------------\t\t---------------\n");
 
 		// Memory contents that have been altered are displayed
 		Integer counter = 0;
@@ -127,8 +128,8 @@ public class Controller implements ControllerInterface {
 	private void displayAllRegisters() {
 		// General purpose registers header
 		MachineMain.machineView
-		.outputText("\nGeneral Purpose Registers:\tR0  \tR1  \tR2  \tR3  "
-				+ "\tR4  \tR5  \tR6  \tR7  \n");
+				.outputText("\nGeneral Purpose Registers:\tR0  \tR1  \tR2  \tR3  "
+						+ "\tR4  \tR5  \tR6  \tR7  \n");
 		MachineMain.machineView.outputText("\t\t----\t----\t----\t----"
 				+ "\t----\t----\t----\t----\n");
 		MachineMain.machineView.outputText("\t                          ");
@@ -137,29 +138,29 @@ public class Controller implements ControllerInterface {
 		int counter = 0;
 		while (counter <= 7) {
 			MachineMain.machineView
-			.outputText('\t' + MachineMain.machineModel.registerMap
-					.get(counter));
+					.outputText('\t' + MachineMain.machineModel.registerMap
+							.get(counter));
 			counter++;
 		}
 
 		// Program counter and CCR header
 		MachineMain.machineView
-		.outputText("\n\nProgram Counter\tCondition Code Registers:\tN\tZ\tP\n");
+				.outputText("\n\nProgram Counter\tCondition Code Registers:\tN\tZ\tP\n");
 		MachineMain.machineView.outputText("---------------\t\t\t\t-\t-\t-\n");
 
 		// Program counter contents and CCR contents display
 		MachineMain.machineView
-		.outputText(MachineMain.machineModel.programCounter
-				+ "           \t                         \t\t\t"
-				+ Utility
-				.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-						.get('N'))
+				.outputText(MachineMain.machineModel.programCounter
+						+ "           \t                         \t\t\t"
+						+ Utility
+								.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+										.get('N'))
 						+ '\t'
 						+ Utility
-						.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-								.get('Z'))
-								+ '\t'
-								+ Utility
+								.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+										.get('Z'))
+						+ '\t'
+						+ Utility
 								.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
 										.get('P')) + '\n');
 	}
@@ -174,14 +175,14 @@ public class Controller implements ControllerInterface {
 	private void displayFull(int header) {
 		if (header == 0) {
 			MachineMain.machineView
-			.outputText("=============================="
-					+ "======================== Initial memory state ==========="
-					+ "=========================================\n");
+					.outputText("=============================="
+							+ "======================== Initial memory state ==========="
+							+ "=========================================\n");
 		} else if (header == 1) {
 			MachineMain.machineView
-			.outputText("=============================="
-					+ "======================== Final memory state ============="
-					+ "========================================\n");
+					.outputText("=============================="
+							+ "======================== Final memory state ============="
+							+ "========================================\n");
 		}
 		displayAllMemory();
 		displayAllRegisters();
@@ -190,10 +191,12 @@ public class Controller implements ControllerInterface {
 				+ "====================================\n");
 	}
 
-	/* (non-Javadoc)
-     * @see ControllerInterface#executeTrap(java.lang.String)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ControllerInterface#executeTrap(java.lang.String)
+	 */
+	@Override
 	public String executeTrap(String executeError) {
 		String error = null;
 		String trapType = executeError.substring(4, 6);
@@ -209,7 +212,7 @@ public class Controller implements ControllerInterface {
 				counter++;
 			}
 			Interpreter.registerChanges[counter] = 7;
-		
+
 		} else if (trapType.equals("22")) {
 			// PUTS: Write the null-terminated string pointed to by R0 to the
 			// console.
@@ -223,7 +226,7 @@ public class Controller implements ControllerInterface {
 				counter++;
 			}
 			Interpreter.registerChanges[counter] = 7;
-			
+
 		} else if (trapType.equals("23")) {
 			// IN: Print a prompt on the screen and read a single character from
 			// the keyboard. The character is copied to the screen and its ASCII
@@ -231,7 +234,7 @@ public class Controller implements ControllerInterface {
 			Boolean containsError = true;
 			while (containsError) {
 				String input = MachineMain.machineView
-				.showInputDialog("Enter a character: ");
+						.showInputDialog("Enter a character: ");
 				if (input.length() > 1) {
 					MachineMain.machineView.showError("Input too long.");
 					containsError = true;
@@ -249,7 +252,7 @@ public class Controller implements ControllerInterface {
 				counter++;
 			}
 			Interpreter.registerChanges[counter] = 7;
-			
+
 		} else if (trapType.equals("25")) {
 			// HALT: Halt execution and print a message to the console.
 			error = "HALT";
@@ -262,12 +265,12 @@ public class Controller implements ControllerInterface {
 				counter++;
 			}
 			Interpreter.registerChanges[counter] = 7;
-			
+
 		} else if (trapType.equals("31")) {
 			// OUTN: Write the value of R0 to the console as a decimal integer.
 			Integer decimal = Utility
-			.HexToDecimalValue(MachineMain.machineModel.registerMap
-					.get(0));
+					.HexToDecimalValue(MachineMain.machineModel.registerMap
+							.get(0));
 			// Convert from 2's complement
 			decimal = Utility.convertFromTwosComplement(decimal);
 			MachineMain.machineView.outputText(decimal.toString());
@@ -280,7 +283,7 @@ public class Controller implements ControllerInterface {
 				counter++;
 			}
 			Interpreter.registerChanges[counter] = 7;
-			
+
 		} else if (trapType.equals("33")) {
 			// INN: Print a prompt on the screen and read a decimal number from
 			// the keyboard. The number is echoed to the screen and stored in
@@ -288,7 +291,7 @@ public class Controller implements ControllerInterface {
 			Boolean containsError = true;
 			while (containsError) {
 				String input = MachineMain.machineView
-				.showInputDialog("Enter an integer: ");
+						.showInputDialog("Enter an integer: ");
 				containsError = readTrapInteger(input);
 			}
 			// Set register 7 to the program counter per specifications.
@@ -300,7 +303,7 @@ public class Controller implements ControllerInterface {
 				counter++;
 			}
 			Interpreter.registerChanges[counter] = 7;
-			
+
 		} else if (trapType.equals("43")) {
 			// RND: Store a random number in R0.
 			Random generator = new Random();
@@ -348,8 +351,8 @@ public class Controller implements ControllerInterface {
 	 */
 	private void trapOut() {
 		int decimal = Utility
-		.HexToDecimalValue(MachineMain.machineModel.registerMap.get(0)
-				.substring(2, 4));
+				.HexToDecimalValue(MachineMain.machineModel.registerMap.get(0)
+						.substring(2, 4));
 		String output = Character.toString((char) decimal);
 		MachineMain.machineView.outputText(output);
 	}
@@ -359,13 +362,13 @@ public class Controller implements ControllerInterface {
 	 */
 	private void trapPuts() {
 		int count = Utility
-		.HexToDecimalValue(MachineMain.machineModel.registerMap.get(0));
+				.HexToDecimalValue(MachineMain.machineModel.registerMap.get(0));
 		while (!(MachineMain.machineModel.memoryArray[count] == null)) {
 			if (MachineMain.machineModel.memoryArray[count].equals("0000")) {
 				break;
 			}
 			int decimal = Utility
-			.HexToDecimalValue(MachineMain.machineModel.memoryArray[count]);
+					.HexToDecimalValue(MachineMain.machineModel.memoryArray[count]);
 			String output = Character.toString((char) decimal);
 			MachineMain.machineView.outputText(output);
 			count++;
@@ -382,17 +385,27 @@ public class Controller implements ControllerInterface {
 	 */
 	public class GetFileLocation implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			String getFileError;
+
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
 
-			// Send the input to the loader.
-			String getFileError;
+			// Send the input to the assembler.
 			try {
-				getFileError = InputInstructions.FindFile(text);
-			} catch (IOException e1) {
-				getFileError = "An error has occurred while loading this file.";
+				getFileError = Assembler.WilevenAssembler.assemble(text);
+			} catch (IOException e2) {
+				getFileError = "An unknown IOException was thrown while assembling.";
 			}
 
+			if (getFileError == null) {
+				// Send the input to the loader.
+				try {
+					getFileError = InputInstructions.FindFile("file.txt");
+				} catch (IOException e1) {
+					getFileError = "An error has occurred while loading this file.";
+				}
+			}
+			
 			// Check if the loader returned an error finding the file.
 			if (getFileError != null) {
 				echoInput();
@@ -436,7 +449,7 @@ public class Controller implements ControllerInterface {
 			} else {
 				// Display error and instructions again.
 				MachineMain.machineView
-				.showError("Invalid response. Valid responses: A, B");
+						.showError("Invalid response. Valid responses: A, B");
 				MachineMain.machineView.outputText(runOrOptionsInst);
 			}
 		}
@@ -484,7 +497,7 @@ public class Controller implements ControllerInterface {
 					} else {
 						// Display error and instructions again.
 						MachineMain.machineView
-						.showError("Invalid response. Valid responses: 1 to 2,147,483,647, -1");
+								.showError("Invalid response. Valid responses: 1 to 2,147,483,647, -1");
 						MachineMain.machineView.outputText("CURRENT: "
 								+ MachineMain.machineModel.instructionLimit
 								+ '\n' + optionsInst);
@@ -492,7 +505,7 @@ public class Controller implements ControllerInterface {
 				} else {
 					// Display error and instructions again.
 					MachineMain.machineView
-					.showError("Invalid response. Valid responses: 1 to 2,147,483,647, -1");
+							.showError("Invalid response. Valid responses: 1 to 2,147,483,647, -1");
 					MachineMain.machineView.outputText("CURRENT: "
 							+ MachineMain.machineModel.instructionLimit + '\n'
 							+ optionsInst);
@@ -533,7 +546,7 @@ public class Controller implements ControllerInterface {
 			} else {
 				// Display error and instructions again.
 				MachineMain.machineView
-				.showError("Invalid response. Valid responses: A, B, C");
+						.showError("Invalid response. Valid responses: A, B, C");
 				MachineMain.machineView.outputText(modeSelectInst);
 			}
 		}
@@ -550,7 +563,7 @@ public class Controller implements ControllerInterface {
 			if (!isExecuting) {
 				isExecuting = true;
 				MachineMain.machineView.outputText("Executing...\n");
-				
+
 				// Run the interpreter until the instruction limit is reached.
 				int instructionCount = 0;
 				while (instructionCount < MachineMain.machineModel.instructionLimit) {
@@ -571,7 +584,7 @@ public class Controller implements ControllerInterface {
 									break;
 								} else {
 									MachineMain.machineView
-									.outputText(trapError + '\n');
+											.outputText(trapError + '\n');
 								}
 							}
 						} else if (executeError.substring(0, 4).equals("DBUG")) {
@@ -582,7 +595,7 @@ public class Controller implements ControllerInterface {
 							// Program counter was altered successfully.
 						} else {
 							MachineMain.machineView
-							.outputText(executeError + '\n');
+									.outputText(executeError + '\n');
 						}
 					}
 
@@ -642,7 +655,7 @@ public class Controller implements ControllerInterface {
 									break;
 								} else {
 									MachineMain.machineView
-									.outputText(trapError + '\n');
+											.outputText(trapError + '\n');
 								}
 							}
 						} else if (executeError.substring(0, 4).equals("DBUG")) {
@@ -653,7 +666,7 @@ public class Controller implements ControllerInterface {
 							// Program counter was altered successfully.
 						} else {
 							MachineMain.machineView
-							.outputText(executeError + '\n');
+									.outputText(executeError + '\n');
 						}
 					}
 					String[] memAltered = Interpreter.memoryChanges;
@@ -662,20 +675,20 @@ public class Controller implements ControllerInterface {
 					if (memAltered[0] != null) {
 						// Memory header
 						MachineMain.machineView
-						.outputText("\n\tMemory Address\tNew Memory Contents\n");
+								.outputText("\n\tMemory Address\tNew Memory Contents\n");
 						MachineMain.machineView
-						.outputText("\t--------------\t\t-------------------\n");
+								.outputText("\t--------------\t\t-------------------\n");
 
 						// Memory contents that have been altered are displayed
 						Integer counter = 0;
 						while (memAltered[counter] != null) {
 							MachineMain.machineView
-							.outputText('\t'
-									+ memAltered[counter]
-									             + "          \t\t"
-									             + MachineMain.machineModel.memoryArray[Utility
-									                                                    .HexToDecimalValue(memAltered[counter])]
-									                                                    + '\n');
+									.outputText('\t'
+											+ memAltered[counter]
+											+ "          \t\t"
+											+ MachineMain.machineModel.memoryArray[Utility
+													.HexToDecimalValue(memAltered[counter])]
+											+ '\n');
 							counter++;
 						}
 					}
@@ -684,9 +697,9 @@ public class Controller implements ControllerInterface {
 					if (regAltered[0] != null) {
 						// Register header
 						MachineMain.machineView
-						.outputText("\n\tRegister Number\tNew Register Contents\n");
+								.outputText("\n\tRegister Number\tNew Register Contents\n");
 						MachineMain.machineView
-						.outputText("\t---------------\t\t---------------------\n");
+								.outputText("\t---------------\t\t---------------------\n");
 
 						// Register contents that have been altered are
 						// displayed
@@ -695,8 +708,8 @@ public class Controller implements ControllerInterface {
 							MachineMain.machineView.outputText("\tR"
 									+ Utility.DecimalValueToHex(
 											regAltered[counter]).substring(3)
-											+ "             \t\t"
-											+ MachineMain.machineModel.registerMap
+									+ "             \t\t"
+									+ MachineMain.machineModel.registerMap
 											.get(regAltered[counter]) + '\n');
 
 							counter++;
@@ -705,19 +718,19 @@ public class Controller implements ControllerInterface {
 						// Display condition code registers regardless of
 						// whether they have changed or not
 						MachineMain.machineView
-						.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
+								.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
 						MachineMain.machineView.outputText("\t\t\t-\t-\t-\n");
 						MachineMain.machineView
-						.outputText("\t\t                         \t"
-								+ Utility
-								.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-										.get('N'))
+								.outputText("\t\t                         \t"
+										+ Utility
+												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+														.get('N'))
 										+ '\t'
 										+ Utility
-										.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-												.get('Z'))
-												+ '\t'
-												+ Utility
+												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+														.get('Z'))
+										+ '\t'
+										+ Utility
 												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
 														.get('P')) + '\n');
 					}
@@ -728,10 +741,12 @@ public class Controller implements ControllerInterface {
 				// If the instruction limit was met, display error
 				if (instructionCount == MachineMain.machineModel.instructionLimit) {
 					MachineMain.machineView
-					.showError("Instruction Limit Reached.");
-					// Output final memory contents
-					displayFull(1);
+							.showError("Instruction Limit Reached.");
 				}
+
+				// Output final memory contents
+				displayFull(1);
+
 				// Output new instructions and change action listener to end.
 				MachineMain.machineView.outputText('\n' + endInst);
 				isExecuting = false;
@@ -791,7 +806,7 @@ public class Controller implements ControllerInterface {
 									isEnd = true;
 								} else {
 									MachineMain.machineView
-									.outputText(trapError + '\n');
+											.outputText(trapError + '\n');
 								}
 							}
 						} else if (executeError.substring(0, 4).equals("DBUG")) {
@@ -802,7 +817,7 @@ public class Controller implements ControllerInterface {
 							// Program counter was altered successfully.
 						} else {
 							MachineMain.machineView
-							.outputText(executeError + '\n');
+									.outputText(executeError + '\n');
 						}
 					}
 					String[] memAltered = Interpreter.memoryChanges;
@@ -811,20 +826,20 @@ public class Controller implements ControllerInterface {
 					if (memAltered[0] != null) {
 						// Memory header
 						MachineMain.machineView
-						.outputText("\n\tMemory Address\tNew Memory Contents\n");
+								.outputText("\n\tMemory Address\tNew Memory Contents\n");
 						MachineMain.machineView
-						.outputText("\t--------------\t\t-------------------\n");
+								.outputText("\t--------------\t\t-------------------\n");
 
 						// Memory contents that have been altered are displayed
 						Integer counter = 0;
 						while (memAltered[counter] != null) {
 							MachineMain.machineView
-							.outputText('\t'
-									+ memAltered[counter]
-									             + "          \t\t"
-									             + MachineMain.machineModel.memoryArray[Utility
-									                                                    .HexToDecimalValue(memAltered[counter])]
-									                                                    + '\n');
+									.outputText('\t'
+											+ memAltered[counter]
+											+ "          \t\t"
+											+ MachineMain.machineModel.memoryArray[Utility
+													.HexToDecimalValue(memAltered[counter])]
+											+ '\n');
 							counter++;
 						}
 					}
@@ -833,9 +848,9 @@ public class Controller implements ControllerInterface {
 					if (regAltered[0] != null) {
 						// Register header
 						MachineMain.machineView
-						.outputText("\n\tRegister Number\tNew Register Contents\n");
+								.outputText("\n\tRegister Number\tNew Register Contents\n");
 						MachineMain.machineView
-						.outputText("\t---------------\t\t---------------------\n");
+								.outputText("\t---------------\t\t---------------------\n");
 
 						// Register contents that have been altered are
 						// displayed
@@ -844,8 +859,8 @@ public class Controller implements ControllerInterface {
 							MachineMain.machineView.outputText("\tR"
 									+ Utility.DecimalValueToHex(
 											regAltered[counter]).substring(3)
-											+ "             \t\t"
-											+ MachineMain.machineModel.registerMap
+									+ "             \t\t"
+									+ MachineMain.machineModel.registerMap
 											.get(regAltered[counter]) + '\n');
 
 							counter++;
@@ -854,25 +869,25 @@ public class Controller implements ControllerInterface {
 						// Display condition code registers regardless of
 						// whether they have changed or not
 						MachineMain.machineView
-						.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
+								.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
 						MachineMain.machineView.outputText("\t\t\t-\t-\t-\n");
 						MachineMain.machineView
-						.outputText("\t\t                         \t"
-								+ Utility
-								.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-										.get('N'))
+								.outputText("\t\t                         \t"
+										+ Utility
+												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+														.get('N'))
 										+ '\t'
 										+ Utility
-										.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-												.get('Z'))
-												+ '\t'
-												+ Utility
+												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+														.get('Z'))
+										+ '\t'
+										+ Utility
 												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
 														.get('P')) + '\n');
 					}
 				} else {
 					MachineMain.machineView
-					.showError("Instruction Limit Reached.");
+							.showError("Instruction Limit Reached.");
 					isEnd = true;
 				}
 
@@ -889,7 +904,7 @@ public class Controller implements ControllerInterface {
 				} else {
 					stepExecInst++;
 					MachineMain.machineView
-					.outputText("\nPress enter to continue execution.\n\n");
+							.outputText("\nPress enter to continue execution.\n\n");
 					isExecuting = false;
 				}
 			}
@@ -903,11 +918,13 @@ public class Controller implements ControllerInterface {
 	 * 
 	 * @author Ben Trivett
 	 */
-	public class EndOrRestart implements ActionListener{
-		/* (non-Javadoc)
+	public class EndOrRestart implements ActionListener {
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see ControllerInterface#actionPerformed(java.awt.event.ActionEvent)
 		 */
-		
+
 		public void actionPerformed(ActionEvent e) {
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
@@ -927,16 +944,18 @@ public class Controller implements ControllerInterface {
 			} else {
 				// Display error and instructions again.
 				MachineMain.machineView
-				.showError("Invalid response. Valid responses: A, B, C");
+						.showError("Invalid response. Valid responses: A, B, C");
 				MachineMain.machineView.outputText(endInst);
 			}
 		}
 	}
 
-	  /* (non-Javadoc)
-     * @see ControllerInterface#keyTyped(char)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ControllerInterface#keyTyped(char)
+	 */
+	@Override
 	public Boolean keyTyped(char ch) {
 		if ((int) ch >= 0 && (int) ch <= 255) {
 			Character output = ch;
@@ -971,10 +990,12 @@ public class Controller implements ControllerInterface {
 
 	}
 
-    /* (non-Javadoc)
-     * @see ControllerInterface#readTrapInteger(java.lang.String)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ControllerInterface#readTrapInteger(java.lang.String)
+	 */
+	@Override
 	public Boolean readTrapInteger(String text) {
 		// Check for possible exception
 		Boolean errorExists = false;
@@ -1019,7 +1040,7 @@ public class Controller implements ControllerInterface {
 		} else {
 			// Display error and instructions again.
 			MachineMain.machineView
-			.showError("Invalid response. Valid responses: -32,768 to 32767");
+					.showError("Invalid response. Valid responses: -32,768 to 32767");
 		}
 		return errorExists;
 	}

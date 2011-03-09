@@ -39,6 +39,22 @@ public class PassTwo {
 		String textRecord = null;
 		String pTextRecord = null;
 
+		// Add all of the external symbols to the symbol table.
+		if (Tables.externalSymbolTable.size() > 0) {
+			String[] extTableKeys = Tables.externalSymbolTable.keySet()
+					.toArray(new String[0]);
+			int extTableCount = 0;
+			while (extTableCount < extTableKeys.length) {
+				if (!machineTables.symbolTable
+						.containsKey(extTableKeys[extTableCount])) {
+					machineTables.symbolTable.put(extTableKeys[extTableCount],
+							Tables.externalSymbolTable
+									.get(extTableKeys[extTableCount]));
+				}
+				extTableCount++;
+			}
+		}
+
 		// Read in first line from the intermediate file.
 		String read = file.readLine();
 		Integer lineCounter = Integer.parseInt(read.substring(0,
@@ -55,7 +71,7 @@ public class PassTwo {
 		// Determine the length of the program's footprint by subtracting the
 		// starting location from the final location counter.
 		int adress = Utility.HexToDecimalValue(start);
-		String length = Utility.DecimalValueToHex(machineTables.locationCounter
+		String length = Utility.DecimalValueToHex(Tables.locationCounter
 				- adress + 1);
 
 		if (length.equals("0000")) {
@@ -987,11 +1003,11 @@ public class PassTwo {
 				// Check if it is a pseudo operation.
 			} else if (machineTables.psuedoOpTable.containsKey(operations)) {
 				if (operations.equals(".ENT ") || operations.equals(".EXT ")) {
-					
+
 				}
 				// The number of operands must match the operation's formating.
-				if (!(operations.equals(".ENT ") || operations.equals(".EXT ")) &&
-						(machineTables.psuedoOpTable.get(operations) != op.length)) {
+				if (!(operations.equals(".ENT ") || operations.equals(".EXT "))
+						&& (machineTables.psuedoOpTable.get(operations) != op.length)) {
 					return "The pseudo operation has an incorrect number of operands on line "
 							+ lineCounter + ".";
 				}
@@ -1221,19 +1237,19 @@ public class PassTwo {
 					+ binary + " (lit)");
 			prettyPrint.newLine();
 		}
-		
+
 		// Write the external symbol table to the end of the file
-		Iterator<String> keySetIterator = machineTables.
-											externalSymbolTable.keySet().iterator();
+		Iterator<String> keySetIterator = Tables.externalSymbolTable.keySet()
+				.iterator();
 		while (keySetIterator.hasNext()) {
 			String symbolKey = keySetIterator.next();
-			String[] symbol = machineTables.externalSymbolTable.get(symbolKey);
-			
+			String[] symbol = Tables.externalSymbolTable.get(symbolKey);
+
 			// Write to object file.
 			pTextRecord = "S" + symbolKey + "=" + symbol[0];
 			bufferedWriter.write(pTextRecord);
 			bufferedWriter.newLine();
-			
+
 			// Write to pretty print.
 			String spaces = "";
 			int spaceLength = 21 - symbolKey.length();
@@ -1244,7 +1260,7 @@ public class PassTwo {
 			prettyPrint.write("(" + symbol[0] + ") " + symbolKey + spaces
 					+ " (ent)");
 			prettyPrint.newLine();
-			
+
 		}
 
 		// Write the end record to the object file.
