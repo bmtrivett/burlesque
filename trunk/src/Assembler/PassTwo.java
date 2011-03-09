@@ -40,15 +40,15 @@ public class PassTwo {
 		String pTextRecord = null;
 
 		// Add all of the external symbols to the symbol table.
-		if (Tables.externalSymbolTable.size() > 0) {
-			String[] extTableKeys = Tables.externalSymbolTable.keySet()
+		if (machineTables.externalSymbolTable.size() > 0) {
+			String[] extTableKeys = machineTables.externalSymbolTable.keySet()
 					.toArray(new String[0]);
 			int extTableCount = 0;
 			while (extTableCount < extTableKeys.length) {
 				if (!machineTables.symbolTable
 						.containsKey(extTableKeys[extTableCount])) {
 					machineTables.symbolTable.put(extTableKeys[extTableCount],
-							Tables.externalSymbolTable
+							machineTables.externalSymbolTable
 									.get(extTableKeys[extTableCount]));
 				}
 				extTableCount++;
@@ -71,7 +71,7 @@ public class PassTwo {
 		// Determine the length of the program's footprint by subtracting the
 		// starting location from the final location counter.
 		int adress = Utility.HexToDecimalValue(start);
-		String length = Utility.DecimalValueToHex(Tables.locationCounter
+		String length = Utility.DecimalValueToHex(machineTables.locationCounter
 				- adress + 1);
 
 		if (length.equals("0000")) {
@@ -104,6 +104,30 @@ public class PassTwo {
 				+ ") " + headerRecord);
 		prettyPrint.newLine();
 
+		// Write the external symbol table to the beginning of the file
+		Iterator<String> keySetIterator = machineTables.symbolLocationTable.keySet().iterator();
+		while (keySetIterator.hasNext()) {
+			String symbolKey = keySetIterator.next();
+			String[] symbol = machineTables.symbolLocationTable.get(symbolKey);
+			
+			// Write to object file.
+			pTextRecord = "S" + symbolKey + "=" + symbol[0];
+			bufferedWriter.write(pTextRecord);
+			bufferedWriter.newLine();
+			
+			// Write to pretty print.
+			String spaces = "";
+			int spaceLength = 21 - symbolKey.length();
+			while (spaceLength > 0) {
+				spaces += " ";
+				spaceLength--;
+			}
+			prettyPrint.write("(" + symbol[0] + ") " + symbolKey + spaces
+					+ " (ent)");
+			prettyPrint.newLine();
+			
+		}
+		
 		// Read second line of the intermediate file.
 		read = file.readLine();
 		lineCounter = Integer.parseInt(read.substring(0, read.indexOf(":")));
@@ -166,13 +190,18 @@ public class PassTwo {
 					// If the operand is a symbol, hex, or decimal value,
 					// get that value in decimal form.
 					Boolean usedRelativeSymbol = false;
-					Integer bin;
+					Boolean usedExternalSymbol = false;
+					String key = op[0];
+					Integer bin = 0;
 					if (machineTables.symbolTable.containsKey(op[0])) {
 						String[] temp = machineTables.symbolTable.get(op[0]);
 						bin = Integer.parseInt(temp[0], 16);
 						if (temp[1].equals("1")) {
-							usedRelativeSymbol = true;
+							usedExternalSymbol = true;
 						}
+					} else if(machineTables.externalSymbolTable.containsKey(op[0])) {
+						usedExternalSymbol = true;
+						
 					} else if (op[0].charAt(0) == 'x') {
 						bin = Integer.parseInt(op[0].substring(1), 16);
 					} else if (op[0].charAt(0) == '#') {
@@ -195,9 +224,11 @@ public class PassTwo {
 					op[0] = Utility.HexToBinary(Utility.DecimalValueToHex(bin));
 					String pcBinary = Utility.HexToBinary((Utility
 							.DecimalValueToHex(adress + 1)));
-					if (!pcBinary.substring(0, 7).equals(op[0].substring(0, 7))) {
-						return "Branching to different page of memory on line "
-								+ lineCounter + ".";
+					if (!usedExternalSymbol) {
+						if (!pcBinary.substring(0, 7).equals(op[0].substring(0, 7))) {
+							return "Branching to different page of memory on line "
+									+ lineCounter + ".";
+						}
 					}
 
 					// Truncate the first seven bits and combine with the rest
@@ -213,6 +244,10 @@ public class PassTwo {
 						stringBuffer.append("P").append(hexAdress)
 								.append(textRecord);
 						pTextRecord = stringBuffer.toString();
+					} else if (usedExternalSymbol) {
+						stringBuffer.append("X").append(hexAdress)
+								.append(textRecord).append(key);
+						pTextRecord = stringBuffer.toString();
 					} else {
 						stringBuffer.append("T").append(hexAdress)
 								.append(textRecord);
@@ -223,8 +258,12 @@ public class PassTwo {
 					// files.
 					bufferedWriter.write(pTextRecord);
 					bufferedWriter.newLine();
+					String external = "";
+					if (usedExternalSymbol) {
+						external = " (External Symbol Used)";
+					}
 					prettyPrint.write("(" + hexAdress + ") " + textRecord + " "
-							+ binary + " (" + lineCounter + ") " + read);
+							+ binary + " (" + lineCounter + ") " + read + external);
 					prettyPrint.newLine();
 
 					// Check if it is a NOP
@@ -1238,30 +1277,6 @@ public class PassTwo {
 			prettyPrint.newLine();
 		}
 
-		// Write the external symbol table to the end of the file
-		Iterator<String> keySetIterator = Tables.externalSymbolTable.keySet()
-				.iterator();
-		while (keySetIterator.hasNext()) {
-			String symbolKey = keySetIterator.next();
-			String[] symbol = Tables.externalSymbolTable.get(symbolKey);
-
-			// Write to object file.
-			pTextRecord = "S" + symbolKey + "=" + symbol[0];
-			bufferedWriter.write(pTextRecord);
-			bufferedWriter.newLine();
-
-			// Write to pretty print.
-			String spaces = "";
-			int spaceLength = 21 - symbolKey.length();
-			while (spaceLength > 0) {
-				spaces += " ";
-				spaceLength--;
-			}
-			prettyPrint.write("(" + symbol[0] + ") " + symbolKey + spaces
-					+ " (ent)");
-			prettyPrint.newLine();
-
-		}
 
 		// Write the end record to the object file.
 		textRecord = "E" + machineTables.startingLocation;
