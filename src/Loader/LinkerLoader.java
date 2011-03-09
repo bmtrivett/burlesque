@@ -9,10 +9,20 @@ import java.io.IOException;
 import Assembler.Tables;
 import Assembler.Utility;
 
-
+/**
+ * 
+ * @author BSchuck
+ *
+ */
 
 public class LinkerLoader {
-	 
+	
+	/**
+	 *  
+	 * @param names
+	 * @return
+	 * @throws IOException
+	 */
 		public static String output(String[] names) throws IOException {
 			//Receive the String array from the assemble with all the file names
 			//Remove the first name
@@ -102,6 +112,13 @@ public class LinkerLoader {
 			bufferedWriter.newLine();
 			return null;
 		}
+		/**
+		 * 
+		 * @param str
+		 * @param x
+		 * @param y
+		 * @return
+		 */
 		private static String overSubstring(String str, int x, int y) {
 			Boolean exceptions = true;
 			int z = 0;
