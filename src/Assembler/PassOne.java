@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * This class contains the run method that executes the first pass of assembly.
@@ -91,27 +90,25 @@ public class PassOne {
 		}
 		machineTables.isSymbolRelative = false;
 		if (location.equals("     ")) {
-			// Tables.locationCounter = 0;
+			machineTables.locationCounter = 0;
 			machineTables.isRelative = true;
 		} else {
-			// NO ABSOLUTE PROGRAMS ALLOWED.
-			return "Program must use relative addressing.";
-//			if (!(location.charAt(17) == 'x')) {
-//				return "The .ORIG value must be in hex.";
-//			}
-//			location = location.substring(1).trim();
-//			if (location.length() > 4) {
-//				return "Hex value out of range in .ORIG.";
-//			}
-//			Tables.locationCounter = Utility.HexToDecimalValue(location);
-//			machineTables.isRelative = false;
+			if (!(location.charAt(0) == 'x')) {
+				return "The .ORIG value must be in hex.";
+			}
+			location = location.substring(1).trim();
+			if (location.length() > 4) {
+				return "Hex value out of range in .ORIG.";
+			}
+			machineTables.locationCounter = Utility.HexToDecimalValue(location);
+			machineTables.isRelative = false;
 		}
 		String origin = Utility
-				.DecimalValueToHex(Tables.locationCounter);
+				.DecimalValueToHex(machineTables.locationCounter);
 
 		// Save the .ORIG label to the symbol table.
 		String tempArray[] = new String[2];
-		tempArray[0] = Utility.DecimalValueToHex(Tables.locationCounter);
+		tempArray[0] = Utility.DecimalValueToHex(machineTables.locationCounter);
 		tempArray[1] = Utility.BooleanToString(machineTables.isRelative);
 		machineTables.symbolTable.put(origLabel, tempArray);
 
@@ -189,7 +186,7 @@ public class PassOne {
 										+ lineCounter
 										+ " is longer than 6 characters.";
 							}
-							Tables.externalSymbolTable.put(entry,
+							machineTables.symbolLocationTable.put(entry,
 									tempEntryArray);
 							startingIndex = indexOfComma + 1;
 							indexOfComma = read.indexOf(comma, startingIndex);
@@ -205,16 +202,23 @@ public class PassOne {
 									+ lineCounter
 									+ " is longer than 6 characters.";
 						}
-						Tables.externalSymbolTable.put(entry,
+						machineTables.symbolLocationTable.put(entry,
 								tempEntryArray);
 					}
 				} else if (entext.equals(".EXT ")) {
+					if (!machineTables.isRelative) {
+						return "The .EXT psuedo-op on line " + lineCounter
+								+ " cannot be used if the program is absolute.";
+					}
 					if (!overSubstring(read, 0, 6).equals("      ")) {
 						return "The .EXT psuedo-op on line " + lineCounter
 								+ " cannot have a label.";
 					} else {
 						String comma = ",";
 						String entry = "";
+						String[] tempEntryArray = new String[2];
+						tempEntryArray[0] = "0000";
+						tempEntryArray[1] = "1";
 						int indexOfComma = read.indexOf(comma);
 						int startingIndex = 17;
 						int numOperands = 1;
@@ -239,6 +243,7 @@ public class PassOne {
 										+ lineCounter
 										+ " is longer than 6 characters.";
 							}
+							machineTables.externalSymbolTable.put(entry, tempEntryArray);
 							startingIndex = indexOfComma + 1;
 							indexOfComma = read.indexOf(comma, startingIndex);
 						}
@@ -253,6 +258,7 @@ public class PassOne {
 									+ lineCounter
 									+ " is longer than 6 characters.";
 						}
+						machineTables.externalSymbolTable.put(entry, tempEntryArray);
 					}
 				}
 
@@ -353,7 +359,7 @@ public class PassOne {
 						// Store the symbol's value based on the location
 						// counter if it is not on a .EQU operation.
 						tempString[0] = Utility
-								.DecimalValueToHex(Tables.locationCounter);
+								.DecimalValueToHex(machineTables.locationCounter);
 						tempString[1] = Utility
 								.BooleanToString(machineTables.isRelative);
 						tempString[2] = "3";
@@ -383,7 +389,7 @@ public class PassOne {
 					// All built in machine operations increment the
 					// location counter by one.
 					if (machineTables.machineOpTable.containsKey(operation)) {
-						Tables.locationCounter++;
+						machineTables.locationCounter++;
 
 						// If it is a pgoffset9 and it is decimal or hexadecimal
 						// address, then check that addr is on the same page
@@ -433,7 +439,7 @@ public class PassOne {
 									}
 									if (!isAddrOnSamePage(
 											addr,
-											Utility.DecimalValueToHex(Tables.locationCounter))) {
+											Utility.DecimalValueToHex(machineTables.locationCounter))) {
 										return "The address on line "
 												+ lineCounter
 												+ " is "
@@ -456,7 +462,7 @@ public class PassOne {
 										return "The symbol length is greater than 6.";
 									}
 									Integer[] pgoffsetArray = new Integer[2];
-									pgoffsetArray[0] = Tables.locationCounter;
+									pgoffsetArray[0] = machineTables.locationCounter;
 									pgoffsetArray[1] = lineCounter;
 									machineTables.passOnePgoffsetCheck.put(
 											addr, pgoffsetArray);
@@ -484,7 +490,7 @@ public class PassOne {
 
 								// If it is then add the value of this
 								// symbol to the location counter.
-								Tables.locationCounter += Utility
+								machineTables.locationCounter += Utility
 										.HexToDecimalValue(machineTables.symbolTable
 												.get(temp)[0]);
 								machineTables.isSymbolRelative = true;
@@ -501,7 +507,7 @@ public class PassOne {
 										return "Decimal out of range on line "
 												+ lineCounter + ".";
 									}
-									Tables.locationCounter += decimalOperand;
+									machineTables.locationCounter += decimalOperand;
 
 									// Check if it is a hex value.
 								} else if (temp.charAt(0) == 'x') {
@@ -509,7 +515,7 @@ public class PassOne {
 										return "Invalid hexadecimal value on line "
 												+ lineCounter + ".";
 									}
-									Tables.locationCounter += Utility
+									machineTables.locationCounter += Utility
 											.HexToDecimalValue(temp
 													.substring(1));
 								} else {
@@ -528,10 +534,10 @@ public class PassOne {
 										+ lineCounter + ".";
 							}
 							String value = overSubstring(read, 18, 18 + index3);
-							Tables.locationCounter += value.length() + 1;
+							machineTables.locationCounter += value.length() + 1;
 
 						} else if (operation.equals(".FILL")) {
-							Tables.locationCounter += 1;
+							machineTables.locationCounter += 1;
 						}
 					}
 				}
@@ -637,7 +643,7 @@ public class PassOne {
 				return "The .END operand points to a location that is before"
 						+ " the load address.";
 			}
-			if (symbolAddress > Tables.locationCounter) {
+			if (symbolAddress > machineTables.locationCounter) {
 				return "The .END operand points to a location that is beyond"
 						+ " the last text record.";
 			}
@@ -686,7 +692,7 @@ public class PassOne {
 		}
 
 		// Set locations in the literal table.
-		machineTables.startOfLiteralTable = Tables.locationCounter;
+		machineTables.startOfLiteralTable = machineTables.locationCounter;
 		String keys[] = machineTables.literalTable.keySet().toArray(
 				new String[machineTables.literalTable.size()]);
 		String tempVal[];
@@ -694,17 +700,16 @@ public class PassOne {
 		while (count < litTableSize) {
 			tempVal = machineTables.literalTable.remove(keys[count]);
 			tempVal[1] = Utility
-					.DecimalValueToHex(Tables.locationCounter);
+					.DecimalValueToHex(machineTables.locationCounter);
 			machineTables.literalTable.put(keys[count].trim(), tempVal);
 			count++;
-			Tables.locationCounter++;
+			machineTables.locationCounter++;
 		}
-		Tables.locationCounter--;
+		machineTables.locationCounter--;
 
 		// Check to see that all pgoffset9 addresses are in the same page
 		// as the location counter.
-		Set<String> pgoffsetKeys = machineTables.passOnePgoffsetCheck.keySet();
-		Iterator<String> pgoffsetIterator = pgoffsetKeys.iterator();
+		Iterator<String> pgoffsetIterator = machineTables.passOnePgoffsetCheck.keySet().iterator();
 		while (pgoffsetIterator.hasNext()) {
 			String pgoffsetKey = pgoffsetIterator.next();
 			Integer[] pgArray = machineTables.passOnePgoffsetCheck
@@ -717,7 +722,7 @@ public class PassOne {
 							+ pgArray[1] + " is not on the same page as the "
 							+ "location counter.";
 				}
-			} else {
+			} else if (!machineTables.externalSymbolTable.containsKey(pgoffsetKey.trim())) {
 				return "The symbol " + pgoffsetKey.trim() + " on line "
 						+ pgArray[1] + " is never defined.";
 			}
@@ -725,13 +730,13 @@ public class PassOne {
 
 		// Make sure the program fits on one page of memory if relative.
 		if (machineTables.isRelative) {
-			if (!Utility.DecimalValueToHex(Tables.locationCounter)
+			if (!Utility.DecimalValueToHex(machineTables.locationCounter)
 					.substring(0, 2).equals(origin.substring(0, 2))) {
 				return "Program exceeds one page of memory: Starting location = "
 						+ origin
 						+ " Final location = "
 						+ Utility
-								.DecimalValueToHex(Tables.locationCounter)
+								.DecimalValueToHex(machineTables.locationCounter)
 						+ ".";
 			}
 		}
@@ -745,16 +750,15 @@ public class PassOne {
 		}
 
 		// Check location of all symbols defined in external symbol table.
-		if (Tables.externalSymbolTable.size() > 0) {
-			Set<String> setOfEntryKeys = Tables.externalSymbolTable
-					.keySet();
-			Iterator<String> iteratorOfEntryKeys = setOfEntryKeys.iterator();
+		if (machineTables.symbolLocationTable.size() > 0) {
+			Iterator<String> iteratorOfEntryKeys = machineTables.symbolLocationTable.
+			keySet().iterator();
 			while (iteratorOfEntryKeys.hasNext()) {
 				String entryKey = iteratorOfEntryKeys.next();
 				if (machineTables.symbolTable.containsKey(entryKey)) {
 					String[] entryArray = machineTables.symbolTable
 							.get(entryKey);
-					Tables.externalSymbolTable.put(entryKey, entryArray);
+					machineTables.symbolLocationTable.put(entryKey, entryArray);
 				} else {
 					return "The .ENT symbol \"" + entryKey + "\" is undefined.";
 				}
