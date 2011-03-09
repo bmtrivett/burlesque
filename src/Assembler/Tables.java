@@ -52,7 +52,7 @@ public class Tables {
 	/**
 	 * The locationCounter is represented as an integer.
 	 */
-	public Integer locationCounter;
+	public static Integer locationCounter;
 	/**
 	 * Is a boolean that is set to true if it is relative and false if it is
 	 * absolute.
