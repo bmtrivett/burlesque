@@ -91,6 +91,7 @@ public class LinkerLoader {
 				if(read.charAt(0) == 'E')
 				{
 					//move on to the next file
+					read = file.readLine();
 					count++;
 				}	
 				
