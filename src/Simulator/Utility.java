@@ -16,11 +16,12 @@ public class Utility {
 	 *         parameter.
 	 */
 	public static String HexToBinary(String hex) {
-		String binString = Integer.toBinaryString(Integer.parseInt(hex, 16));
+		StringBuilder binString = new StringBuilder();
+		binString.append(Integer.toBinaryString(Integer.parseInt(hex, 16)));
 		while (binString.length() < 16) {
-			binString = "0" + binString;
+			binString.insert(0, "0");
 		}
-		return binString;
+		return binString.toString();
 	}
 
 	/**
@@ -32,12 +33,13 @@ public class Utility {
 	 *         parameter.
 	 */
 	public static String BinaryToHex(String binary) {
-		String hexString = Integer.toHexString(Integer.parseInt(binary, 2))
-				.toUpperCase();
+		StringBuilder hexString = new StringBuilder();
+		hexString.append(Integer.toHexString(Integer.parseInt(binary, 2))
+				.toUpperCase());
 		while (hexString.length() < 4) {
-			hexString = "0" + hexString;
+			hexString.insert(0, "0");
 		}
-		return hexString;
+		return hexString.toString();
 	}
 
 	/**
@@ -48,7 +50,12 @@ public class Utility {
 	 * @return An integer that represents the hexadecimal parameter.
 	 */
 	public static Integer HexToDecimalValue(String hex) {
-		return Integer.parseInt(hex, 16);
+		StringBuilder temp = new StringBuilder(hex);
+		// Remove spaces.
+		while (temp.indexOf(" ") != -1) {
+			temp.deleteCharAt(temp.indexOf(" "));
+		}
+		return Integer.parseInt(temp.toString(), 16);
 	}
 
 	/**
@@ -59,11 +66,12 @@ public class Utility {
 	 * @return A string that represents the decimal value parameter.
 	 */
 	public static String DecimalValueToHex(Integer value) {
-		String hexString = Integer.toHexString(value).toUpperCase();
+		StringBuilder hexString = new StringBuilder();
+		hexString.append(Integer.toHexString(value).toUpperCase());
 		while (hexString.length() < 4) {
-			hexString = "0" + hexString;
+			hexString.insert(0, "0");
 		}
-		return hexString;
+		return hexString.toString();
 	}
 
 	/**
@@ -77,6 +85,9 @@ public class Utility {
 	public static Boolean isHexString(String value) {
 		try {
 			Integer.parseInt(value, 16);
+			if (value.length() > 4) {
+				return false;
+			}
 		} catch (Exception e) {
 			return false;
 		}

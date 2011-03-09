@@ -29,7 +29,7 @@ public class Tables {
 	 * follows: Position 0: A hex string representing the location/value of that
 	 * label Position 1: '0' for absolute or '1' for relative.
 	 */
-	public HashMap<String, String[]> externalSymbolTable;
+	public static HashMap<String, String[]> externalSymbolTable = new HashMap<String, String[]>();;
 	/**
 	 * The symbolTable is a hash map that has the label as the string key and
 	 * the value as a string array. The format of the array is as follows:
@@ -53,12 +53,12 @@ public class Tables {
 	 * The locationCounter is represented as an integer.
 	 */
 	public static Integer locationCounter;
+	public static Integer initialLocationCounter;
 	/**
 	 * Is a boolean that is set to true if it is relative and false if it is
 	 * absolute.
 	 */
 	public Boolean isRelative;
-
 	/**
 	 * Is a boolean that is set to true if a .BLKW statement has been
 	 * encountered with a symbol as its operand.
@@ -93,10 +93,8 @@ public class Tables {
 		machineOpTable = new HashMap<String, char[]>();
 		psuedoOpTable = new HashMap<String, Integer>();
 		symbolTable = new HashMap<String, String[]>();
-		externalSymbolTable = new HashMap<String, String[]>();
 		literalTable = new HashMap<String, String[]>();
 		passOnePgoffsetCheck = new HashMap<String, Integer[]>();
-		locationCounter = 0;
 		isRelative = false;
 		startingLocation = "0000";
 
