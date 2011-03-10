@@ -1,7 +1,12 @@
 package Loader;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+
+import Simulator.Utility;
 
 import Assembler.Tables;
 
@@ -14,15 +19,16 @@ import Assembler.Tables;
 public class WilevenLoader {
 
 	public static String IPLA = null;
+	public static int[] place = null;
 	public static int totalSegLength = 0;
 	public static Tables machineTables;
+	public static Boolean warnings = true;
 
 	/**
 	 * @param args
-	 *            The first argument is for the name of the assembly source code
-	 *            file. The second argument (optional) is for the name of the
-	 *            object file. The third argument (optional) is for the name of
-	 *            the pretty printed file.
+	 *            The first argument is for the name of the assembly object
+	 *            file. The second (and third, and so on) argument (optional) 
+	 *            is for the name of the object file to be linked.
 	 * @throws IOException
 	 * @author Ben Trivett
 	 */
@@ -32,8 +38,34 @@ public class WilevenLoader {
 
 		// Instantiate the tables.
 		WilevenLoader.machineTables = new Tables();
+		WilevenLoader.place = new int[args.length];
 
-		
+		int count = 0;
+		while (count < fileNames.length) {
+			// Make sure the object files exist.
+			File inputFile = new File(fileNames[count]);
+			boolean fileExists = inputFile.exists();
+			if (fileExists == false) {
+				System.out.println("ERROR: The file "
+						+ fileNames[count] + " does not exist. Try another one.");
+				System.exit(0);
+			}
+			String read = new BufferedReader(new FileReader(fileNames[count])).readLine();
+			if (read.charAt(0) != 'G' && read.charAt(0) == 'H' && fileNames.length > 1) {
+				System.out.println("ERROR: Cannot use absolute programs when " 
+						+ "linking two or more files.");
+				System.exit(0);
+			}
+			if (read.substring(11).length() == 4 
+					&& Utility.isHexString(read.substring(11))) {
+				WilevenLoader.place[count] = Utility.HexToDecimalValue(read.substring(11));
+			} else {
+				System.out.println("ERROR: Invalid format for segment length in "
+						+ fileNames[count] + " file.");
+				System.exit(0);
+			}
+			count++;
+		}
 		
 		// Execute pass one.
 		String firstPassError = LLPassOne.passOne(fileNames);
@@ -45,101 +77,50 @@ public class WilevenLoader {
 			System.exit(0);
 		}
 
-		// Execute pass two.
-		String secondPassError = PassTwo.output(fileNames[1], fileNames[2],
-				machineTables);
-
-		// If the second pass ended abruptly and returned an error, display it
-		// and exit.
-		if (secondPassError != null) {
-			System.out.println("ERROR: " + secondPassError);
-			System.exit(0);
-		}
+//		// Execute pass two.
+//		String secondPassError = PassTwo.output(fileNames[1], fileNames[2],
+//				machineTables);
+//
+//		// If the second pass ended abruptly and returned an error, display it
+//		// and exit.
+//		if (secondPassError != null) {
+//			System.out.println("ERROR: " + secondPassError);
+//			System.exit(0);
+//		}
 	}
 
 	/**
-	 * Makes sure the arguments that the Wileven Assembler was called with are
-	 * properly formed. If they aren't, errors will be displayed and the program
-	 * will exit. If they are then a string array with the names of the files is
-	 * returned.
+	 * Makes sure there is at least one argument. If not, it produces an error
+	 * message that also specifies the correct format of the arguments to be
+	 * passed in.
 	 * 
 	 * @param args
-	 *            The arguments used on the Wileven Assembler.
-	 * @return A string array of length 3 with the source file location in
-	 *         position 0, the object file name in position 1, and the pretty
-	 *         print file name in position 2.
+	 *            The arguments used on the Wileven Loader.
+	 * @return A string array of with the same contents as the args array passed in,
+	 * unless the args array length is 0. In that case, the program exits and an error
+	 * message is displayed.
 	 */
 	private static String[] checkArgs(String[] args) {
-		String[] fileNames = new String[3];
-		// Make sure the source file location was the in first argument.
-		if (args.length > 0 && args.length < 4) {
-			if (args[0].length() == 0) {
-				System.out
-						.println("ERROR: Source code file location argument is empty.");
-				System.exit(0);
-			}
-			// If the object file argument was empty then use the source file
-			// name.
-			String objOutName;
-			Boolean hasObjName = false;
-			if (args.length < 2) {
-				// Checked first to avoid out of bounds error.
-				// Does not have an object file name.
-			} else if (args.length > 1 && args[2].length() == 0) {
-				// Does not have an object file name.
-			} else {
-				hasObjName = true;
-			}
-			if (!hasObjName) {
-				// Find the dot to replace the file extension with ".o".
-				int dotLocation = args[0].indexOf(".");
-				if (dotLocation == -1) {
-					dotLocation = args[1].length();
-				}
-				objOutName = args[0].substring(0, dotLocation) + ".o";
-			} else {
-				objOutName = args[1];
-			}
-
-			// If the object file argument was empty then use the source file
-			// name.
-			String ppOutName;
-			Boolean hasPpName = false;
-			if (args.length < 3) {
-				// Checked first to avoid out of bounds error.
-				// Does not have a pretty print file name.
-			} else if (args[2].length() == 0) {
-				// Does not have a pretty print file name.
-			} else {
-				hasPpName = true;
-			}
-			if (!hasPpName) {
-				// Find the dot to replace the file extension with ".lst".
-				int dotLocation = args[0].indexOf(".");
-				if (dotLocation == -1) {
-					dotLocation = args[0].length();
-				}
-				ppOutName = args[0].substring(0, dotLocation) + ".lst";
-			} else {
-				ppOutName = args[2];
-			}
-			// Check for file extension requirements.
-			if (!(objOutName.contains(".o"))) {
-				System.out
-						.println("Warning: The object file extension is not .o");
-			}
-			if (!(ppOutName.contains(".lst"))) {
-				System.out
-						.println("Warning: The pretty print file extension is not .lst");
-			}
-			// No errors, load names into the array and return them.
-			fileNames[0] = args[0];
-			fileNames[1] = objOutName;
-			fileNames[2] = ppOutName;
-		} else {
-			System.out.println("ERROR: Incorrect number of arguments.");
+		String[] fileNames = new String[args.length];
+		
+		if (fileNames.length == 0) {
+			System.out.println("Error: No arguments detected.");
+			System.out.println("Format of a properly formatted call is as follows:");
+			System.out.println("java WilevenLoader file1.o file2.o "
+					+ "(Note: number of files is NOT limited to 2");
 			System.exit(0);
 		}
+		
+		int count = 0;
+		while (count < fileNames.length) {
+			fileNames[count] = args[count];
+			if (WilevenLoader.warnings && !(fileNames[count].contains(".o"))) {
+				System.out.println("Warning: Argument Number " + count+1
+						+ " file extension is not .o");
+			}
+			count++;
+		}
+		
 		return fileNames;
 	}
 }

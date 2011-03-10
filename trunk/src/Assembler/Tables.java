@@ -25,11 +25,9 @@ public class Tables {
 
 	/**
 	 * The externalSymbolTable is a hash map that has the label as the string
-	 * key and the value as a string array. The format of the array is as
-	 * follows: Position 0: A hex string representing the location/value of that
-	 * label Position 1: '0' for absolute or '1' for relative.
+	 * key and the value as a hex string.
 	 */
-	public HashMap<String, String[]> externalSymbolTable = new HashMap<String, String[]>();
+	public HashMap<String, String> externalSymbolTable;
 	
 	/**
 	 * The symbolLocationTable is a hash map that is similar to the externalSymbolTable
@@ -99,7 +97,7 @@ public class Tables {
 		machineOpTable = new HashMap<String, char[]>();
 		psuedoOpTable = new HashMap<String, Integer>();
 		symbolTable = new HashMap<String, String[]>();
-		externalSymbolTable = new HashMap<String, String[]>();
+		externalSymbolTable = new HashMap<String, String>();
 		symbolLocationTable = new HashMap<String, String[]>();
 		literalTable = new HashMap<String, String[]>();
 		passOnePgoffsetCheck = new HashMap<String, Integer[]>();
