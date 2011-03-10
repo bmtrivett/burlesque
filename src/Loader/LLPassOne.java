@@ -50,13 +50,8 @@ public class LLPassOne {
 					+ "load location in HEX and hit enter: ");
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					System.in));
-			WilevenLoader.IPLA = null;
-			try {
 				WilevenLoader.IPLA = br.readLine();
-			} catch (IOException e) {
-				System.out.println("Error!");
-				System.exit(1);
-			}
+	
 
 			// check to make sure they enter a address that lets it all fit on
 			// one page
