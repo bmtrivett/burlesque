@@ -81,7 +81,7 @@ public class LLPassOne {
 		read = file.readLine();
 		while (read.charAt(0) == 'S') {
 			// set the location
-			PLA = WilevenLoader.IPLA + newPLA;
+			PLA = Utility.HexToDecimalValue(WilevenLoader.IPLA) + newPLA;
 			// add the length of the segment to the loaction
 			newPLA += WilevenLoader.place[0];
 			// get the index of the equals sign
@@ -117,7 +117,7 @@ public class LLPassOne {
 			read = file.readLine();
 			while (read.charAt(0) == 'S') {
 				// set the location
-				PLA = WilevenLoader.IPLA + newPLA;
+				PLA = Utility.HexToDecimalValue(WilevenLoader.IPLA) + newPLA;
 				// add the length of the segment to the loaction
 				newPLA += WilevenLoader.place[0];
 				// get the index of the equals sign
