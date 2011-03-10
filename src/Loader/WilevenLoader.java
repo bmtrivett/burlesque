@@ -32,7 +32,7 @@ public class WilevenLoader {
 	 * @throws IOException
 	 * @author Ben Trivett
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void link(String[] args) throws IOException {
 		// Make sure the arguments are well formed.
 		String[] fileNames = checkArgs(args);
 
