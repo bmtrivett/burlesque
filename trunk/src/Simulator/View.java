@@ -58,6 +58,7 @@ public class View extends JFrame implements ViewInterface {
 
 		// Set the window closing event.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		inputField.requestFocusInWindow();
 	}
 
 	/* (non-Javadoc)
@@ -74,6 +75,7 @@ public class View extends JFrame implements ViewInterface {
 	@Override
 	public void showError(String errMessage) {
 		JOptionPane.showMessageDialog(this, errMessage);
+		inputField.requestFocusInWindow();
 	}
 
 	/* (non-Javadoc)

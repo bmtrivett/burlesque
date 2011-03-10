@@ -32,14 +32,14 @@ public class Controller implements ControllerInterface {
 	private EndOrRestart end;
 
 	// Consolidate all instruction text.
-	private String getFileInst = "Enter the location of batch file you wish to load:\n";
+	private String getFileInst = "Press Enter to load the linked object file into memory.\n";
 	private String runOrOptionsInst = "Select an option:\n"
 			+ "A) Choose run mode.\nB) Set instruction limit.\n";
 	private String modeSelectInst = "Select run mode:\n"
 			+ "A) Quiet mode.\nB) Trace mode.\nC) Step mode.\n";
 	private String optionsInst = "New instruction limit (1 to 2,147,483,647 "
 			+ "or -1 for DEFAULT):\n";
-	private String endInst = "Execution over, please choose an option:\n"
+	private String endInst = "Execution over, press Q to exit.\n"
 			+ "A) Load another file.\n" + "B) Reset Wileven Machine.\n"
 			+ "C) Quit.\n";
 	private String execInst = "Press enter to start ";
@@ -389,33 +389,22 @@ public class Controller implements ControllerInterface {
 
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
-
-			// Send the input to the assembler.
-			try {
-				getFileError = Assembler.WilevenAssembler.assemble(text);
-			} catch (IOException e2) {
-				getFileError = "An unknown IOException was thrown while assembling.";
-			}
-
-			if (getFileError == null) {
-				// Send the input to the loader.
-				try {
-					getFileError = InputInstructions.FindFile("file.txt");
-				} catch (IOException e1) {
-					getFileError = "An error has occurred while loading this file.";
-				}
-			}
 			
+			// Send the input to the loader.
+			try {
+				getFileError = InputInstructions.FindFile("final.txt");
+			} catch (IOException e1) {
+				getFileError = "An error has occurred while loading this file.";
+			}
+
 			// Check if the loader returned an error finding the file.
 			if (getFileError != null) {
-				echoInput();
-				MachineMain.machineView.showError(getFileError);
-				MachineMain.machineView.outputText(getFileInst);
+				MachineMain.machineView.showError("FATAL ERROR: " + getFileError);
+				System.exit(0);
 			} else {
 				// If no error output new instructions and change
 				// action listener to next.
-				MachineMain.machineView.outputText("Loading: ");
-				echoInput();
+				MachineMain.machineView.outputText("Loading...");
 				MachineMain.machineView.outputText(runOrOptionsInst);
 				MachineMain.machineView.setListener(getFile, runOrOptions);
 			}
@@ -930,21 +919,11 @@ public class Controller implements ControllerInterface {
 			String text = MachineMain.machineView.getInput();
 			echoInput();
 
-			if (text.equals("a") || text.equals("A")) {
-				// Display instructions and change action listener to getFile
-				MachineMain.machineView.outputText(getFileInst);
-				MachineMain.machineView.setListener(end, getFile);
-			} else if (text.equals("b") || text.equals("B")) {
-				// Restart Wileven Machine
-				MachineMain.machineView.dispose();
-				MachineMain.Reset();
-			} else if (text.equals("c") || text.equals("C")) {
+			if (text.equals("q") || text.equals("Q")) {
 				// Close Wileven Machine
 				System.exit(0);
 			} else {
 				// Display error and instructions again.
-				MachineMain.machineView
-						.showError("Invalid response. Valid responses: A, B, C");
 				MachineMain.machineView.outputText(endInst);
 			}
 		}
