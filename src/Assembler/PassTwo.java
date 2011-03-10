@@ -190,18 +190,18 @@ public class PassTwo {
 					// If the operand is a symbol, hex, or decimal value,
 					// get that value in decimal form.
 					Boolean usedRelativeSymbol = false;
-					Boolean usedExternalSymbol = false;
 					String key = op[0];
 					Integer bin = 0;
+					Boolean usedExternalSymbol = false;
+					if (machineTables.externalSymbolTable.containsKey(op[0])) {
+						usedExternalSymbol = true;
+					}
 					if (machineTables.symbolTable.containsKey(op[0])) {
 						String[] temp = machineTables.symbolTable.get(op[0]);
 						bin = Integer.parseInt(temp[0], 16);
 						if (temp[1].equals("1")) {
 							usedExternalSymbol = true;
 						}
-					} else if(machineTables.externalSymbolTable.containsKey(op[0])) {
-						usedExternalSymbol = true;
-						
 					} else if (op[0].charAt(0) == 'x') {
 						bin = Integer.parseInt(op[0].substring(1), 16);
 					} else if (op[0].charAt(0) == '#') {
@@ -240,12 +240,12 @@ public class PassTwo {
 					adress += 1;
 
 					// Build the text record.
-					if (usedRelativeSymbol) {
-						stringBuffer.append("P").append(hexAdress)
+					if (usedExternalSymbol) {
+						stringBuffer.append("X").append(hexAdress)
 								.append(textRecord);
 						pTextRecord = stringBuffer.toString();
-					} else if (usedExternalSymbol) {
-						stringBuffer.append("X").append(hexAdress)
+					} else if (usedRelativeSymbol) {
+						stringBuffer.append("P").append(hexAdress)
 								.append(textRecord).append(key);
 						pTextRecord = stringBuffer.toString();
 					} else {
@@ -501,6 +501,10 @@ public class PassTwo {
 					// If the operand is a symbol, hex, or decimal value,
 					// get that value in decimal form.
 					Boolean usedRelativeSymbol = false;
+					Boolean usedExternalSymbol = false;
+					if (machineTables.externalSymbolTable.containsKey(op[0])) {
+						usedExternalSymbol = true;
+					}
 					if (machineTables.symbolTable.containsKey(op[1])) {
 						String[] temp = machineTables.symbolTable.get(op[1]);
 						bin = Integer.parseInt(temp[0], 16);
@@ -555,7 +559,11 @@ public class PassTwo {
 					adress += 1;
 
 					// Build the text record.
-					if (usedRelativeSymbol) {
+					if (usedExternalSymbol) {
+						stringBuffer.append("X").append(hexAdress)
+								.append(textRecord);
+						pTextRecord = stringBuffer.toString();
+					} else if (usedRelativeSymbol) {
 						stringBuffer.append("P").append(hexAdress)
 								.append(textRecord);
 						pTextRecord = stringBuffer.toString();
@@ -569,8 +577,12 @@ public class PassTwo {
 					// files.
 					bufferedWriter.write(pTextRecord);
 					bufferedWriter.newLine();
+					String external = "";
+					if (usedExternalSymbol) {
+						external = " (External Symbol Used)";
+					}
 					prettyPrint.write("(" + hexAdress + ") " + textRecord + " "
-							+ binary + " (" + lineCounter + ") " + read);
+							+ binary + " (" + lineCounter + ") " + read + external);
 					prettyPrint.newLine();
 
 					// Check if it is a JSR or JMP
@@ -594,6 +606,10 @@ public class PassTwo {
 					// get that value in decimal form.
 					Boolean usedRelativeSymbol = false;
 					Integer bin;
+					Boolean usedExternalSymbol = false;
+					if (machineTables.externalSymbolTable.containsKey(op[0])) {
+						usedExternalSymbol = true;
+					}
 					if (machineTables.symbolTable.containsKey(op[0])) {
 						String[] temp = machineTables.symbolTable.get(op[0]);
 						bin = Integer.parseInt(temp[0], 16);
@@ -636,7 +652,11 @@ public class PassTwo {
 					adress += 1;
 
 					// Build the text record.
-					if (usedRelativeSymbol) {
+					if (usedExternalSymbol) {
+						stringBuffer.append("X").append(hexAdress)
+								.append(textRecord);
+						pTextRecord = stringBuffer.toString();
+					} else if (usedRelativeSymbol) {
 						stringBuffer.append("P").append(hexAdress)
 								.append(textRecord);
 						pTextRecord = stringBuffer.toString();
@@ -650,8 +670,12 @@ public class PassTwo {
 					// files.
 					bufferedWriter.write(pTextRecord);
 					bufferedWriter.newLine();
+					String external = "";
+					if (usedExternalSymbol) {
+						external = " (External Symbol Used)";
+					}
 					prettyPrint.write("(" + hexAdress + ") " + textRecord + " "
-							+ binary + " (" + lineCounter + ") " + read);
+							+ binary + " (" + lineCounter + ") " + read + external);
 					prettyPrint.newLine();
 
 					// Check if it is a LDR or STR
