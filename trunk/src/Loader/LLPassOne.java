@@ -8,9 +8,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import Assembler.Utility;
-
+/**
+ * 
+ * @author BSchuck
+ *
+ */
 public class LLPassOne {
-
+/**
+ * 
+ * @param names
+ * @return
+ * @throws IOException
+ */
 	public static String passOne(String[] names) throws IOException {
 		int total = WilevenLoader.totalSegLength;
 		int PLA = 0;
@@ -138,7 +147,13 @@ public class LLPassOne {
 		return null;
 
 	}
-
+/**
+ * 
+ * @param str
+ * @param x
+ * @param y
+ * @return
+ */
 	private static String overSubstring(String str, int x, int y) {
 		Boolean exceptions = true;
 		int z = 0;
