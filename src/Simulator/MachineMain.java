@@ -14,9 +14,7 @@ public class MachineMain {
 	public static Model machineModel;
 
 	public static void main(String[] args) {
-		if ((args.length != 0) || (args[0] != null)) {
-			machineModel.fileLocation = args[0];
-		} else {
+		if ((args.length == 0) || (args[0] == null)) {
 			System.out
 					.println("ERROR: The first argument must be the location of the file to be simulated.");
 			System.exit(0);
@@ -31,6 +29,7 @@ public class MachineMain {
 	public static void Reset(String args) {
 		// Initialize model
 		machineModel = new Model();
+		machineModel.fileLocation = args;
 
 		// Initialize view
 		machineView = new View();
