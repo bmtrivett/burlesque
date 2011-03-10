@@ -1,9 +1,7 @@
 package Loader;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -21,12 +19,12 @@ public class LLPassOne {
  * @throws IOException
  */
 	public static String passOne(String[] names) throws IOException {
-		int total = WilevenLoader.totalSegLength;
 		int PLA = 0;
+		int total = WilevenLoader.totalSegLength;
 		int newPLA = 0;
 		String firstHeader = "";
 		String read = "";
-		String end = "";
+	
 
 		// read the first file
 		FileReader reader = new FileReader(names[0]);
@@ -61,13 +59,8 @@ public class LLPassOne {
 								+ "load location in HEX and hit enter: ");
 				BufferedReader br1 = new BufferedReader(new InputStreamReader(
 						System.in));
-				WilevenLoader.IPLA = null;
-				try {
 					WilevenLoader.IPLA = br1.readLine();
-				} catch (IOException e) {
-					System.out.println("Error!");
-					System.exit(1);
-				}
+			
 
 			}
 		}
@@ -76,7 +69,7 @@ public class LLPassOne {
 		read = file.readLine();
 		while (read.charAt(0) == 'S') {
 			// set the location
-			PLA = Utility.HexToDecimalValue(WilevenLoader.IPLA) + newPLA;
+			PLA  = Utility.HexToDecimalValue(WilevenLoader.IPLA) + newPLA;
 			// add the length of the segment to the loaction
 			newPLA += WilevenLoader.place[0];
 			// get the index of the equals sign
@@ -86,8 +79,7 @@ public class LLPassOne {
 			// get the value of the symbol
 			String loc = overSubstring(read, index, index + 4);
 			// update the pla with the new value
-			String updatedPLA = Utility.DecimalValueToHex(Utility
-					.HexToDecimalValue(WilevenLoader.IPLA)
+			String updatedPLA = Utility.DecimalValueToHex(PLA
 					+ Utility.HexToDecimalValue(loc));
 			// put them into the external symbol table
 			WilevenLoader.machineTables.externalSymbolTable.put(name, updatedPLA);
@@ -122,8 +114,7 @@ public class LLPassOne {
 				// get the value of the symbol
 				String loc = overSubstring(read, index, index + 4);
 				// update the pla with the new value
-				String updatedPLA = Utility.DecimalValueToHex(Utility
-						.HexToDecimalValue(WilevenLoader.IPLA)
+				String updatedPLA = Utility.DecimalValueToHex(PLA
 						+ Utility.HexToDecimalValue(loc));
 				// put them into the external symbol table
 				WilevenLoader.machineTables.externalSymbolTable.put(name, updatedPLA);
