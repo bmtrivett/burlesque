@@ -32,7 +32,8 @@ public class Controller implements ControllerInterface {
 	private EndOrRestart end;
 
 	// Consolidate all instruction text.
-	private String getFileInst = "Press Enter to load the linked object file into memory.\n";
+	private String getFileInst = "Press Enter to load "
+			+ MachineMain.machineModel.fileLocation + " into memory.\n";
 	private String runOrOptionsInst = "Select an option:\n"
 			+ "A) Choose run mode.\nB) Set instruction limit.\n";
 	private String modeSelectInst = "Select run mode:\n"
@@ -389,17 +390,19 @@ public class Controller implements ControllerInterface {
 
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
-			
+
 			// Send the input to the loader.
 			try {
-				getFileError = InputInstructions.FindFile("final.txt");
+				getFileError = InputInstructions
+						.FindFile(MachineMain.machineModel.fileLocation);
 			} catch (IOException e1) {
 				getFileError = "An error has occurred while loading this file.";
 			}
 
 			// Check if the loader returned an error finding the file.
 			if (getFileError != null) {
-				MachineMain.machineView.showError("FATAL ERROR: " + getFileError);
+				MachineMain.machineView.showError("FATAL ERROR: "
+						+ getFileError);
 				System.exit(0);
 			} else {
 				// If no error output new instructions and change

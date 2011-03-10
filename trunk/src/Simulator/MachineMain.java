@@ -14,16 +14,24 @@ public class MachineMain {
 	public static Model machineModel;
 
 	public static void main(String[] args) {
-		Reset();
+		Reset(args);
 	}
 
 	/**
 	 * Resets the Wileven Machine by creating new instances of the Model, View,
 	 * and Controller.
 	 */
-	public static void Reset() {
+	public static void Reset(String[] args) {
 		// Initialize model
 		machineModel = new Model();
+
+		if ((args.length != 0) || (args[0] != null)) {
+			machineModel.fileLocation = args[0];
+		} else {
+			System.out
+					.println("ERROR: The first argument must be the location of the file to be simulated.");
+			System.exit(0);
+		}
 
 		// Initialize view
 		machineView = new View();
