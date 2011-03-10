@@ -111,10 +111,10 @@ public class PassTwo {
 		Iterator<String> keySetIterator = machineTables.symbolLocationTable.keySet().iterator();
 		while (keySetIterator.hasNext()) {
 			String symbolKey = keySetIterator.next();
-			String[] symbol = machineTables.symbolLocationTable.get(symbolKey);
+			String symbol = machineTables.symbolLocationTable.get(symbolKey);
 			
 			// Write to object file.
-			pTextRecord = "S" + symbolKey + "=" + symbol[0];
+			pTextRecord = "S" + symbolKey + "=" + symbol;
 			bufferedWriter.write(pTextRecord);
 			bufferedWriter.newLine();
 			
@@ -125,7 +125,7 @@ public class PassTwo {
 				spaces += " ";
 				spaceLength--;
 			}
-			prettyPrint.write("(" + symbol[0] + ") " + symbolKey + spaces
+			prettyPrint.write("(" + symbol + ") " + symbolKey + spaces
 					+ " (ent)");
 			prettyPrint.newLine();
 			

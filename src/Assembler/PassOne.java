@@ -103,6 +103,10 @@ public class PassOne {
 			machineTables.locationCounter = Utility.HexToDecimalValue(location);
 			machineTables.isRelative = false;
 		}
+		if (machineTables.isRelative) {
+			machineTables.symbolLocationTable.put(origLabel, 
+					Utility.DecimalValueToHex(machineTables.locationCounter));
+		}
 		String origin = Utility
 				.DecimalValueToHex(machineTables.locationCounter);
 
@@ -161,7 +165,7 @@ public class PassOne {
 					} else {
 						String comma = ",";
 						String entry = "";
-						String[] tempEntryArray = new String[2];
+						String tempEntry = "0000";
 						int indexOfComma = read.indexOf(comma);
 						int startingIndex = 17;
 						int numOperands = 1;
@@ -187,7 +191,7 @@ public class PassOne {
 										+ " is longer than 6 characters.";
 							}
 							machineTables.symbolLocationTable.put(entry,
-									tempEntryArray);
+									tempEntry);
 							startingIndex = indexOfComma + 1;
 							indexOfComma = read.indexOf(comma, startingIndex);
 						}
@@ -203,7 +207,7 @@ public class PassOne {
 									+ " is longer than 6 characters.";
 						}
 						machineTables.symbolLocationTable.put(entry,
-								tempEntryArray);
+								tempEntry);
 					}
 				} else if (entext.equals(".EXT ")) {
 					if (!machineTables.isRelative) {
@@ -754,9 +758,9 @@ public class PassOne {
 			while (iteratorOfEntryKeys.hasNext()) {
 				String entryKey = iteratorOfEntryKeys.next();
 				if (machineTables.symbolTable.containsKey(entryKey)) {
-					String[] entryArray = machineTables.symbolTable
-							.get(entryKey);
-					machineTables.symbolLocationTable.put(entryKey, entryArray);
+					String entryLocation = machineTables.symbolTable
+							.get(entryKey)[0];
+					machineTables.symbolLocationTable.put(entryKey, entryLocation);
 				} else {
 					return "The .ENT symbol \"" + entryKey + "\" is undefined.";
 				}

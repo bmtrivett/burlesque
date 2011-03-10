@@ -33,7 +33,7 @@ public class Tables {
 	 * The symbolLocationTable is a hash map that is similar to the externalSymbolTable
 	 * although it only contains the entry symbols of the file being parsed through.
 	 */
-	public HashMap<String, String[]> symbolLocationTable;
+	public HashMap<String, String> symbolLocationTable;
 	/**
 	 * The symbolTable is a hash map that has the label as the string key and
 	 * the value as a string array. The format of the array is as follows:
@@ -98,7 +98,7 @@ public class Tables {
 		psuedoOpTable = new HashMap<String, Integer>();
 		symbolTable = new HashMap<String, String[]>();
 		externalSymbolTable = new HashMap<String, String>();
-		symbolLocationTable = new HashMap<String, String[]>();
+		symbolLocationTable = new HashMap<String, String>();
 		literalTable = new HashMap<String, String[]>();
 		passOnePgoffsetCheck = new HashMap<String, Integer[]>();
 		isRelative = false;
