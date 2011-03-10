@@ -12,6 +12,10 @@ import java.util.Map;
  */
 public class Model implements ModelInterface {
 	/**
+	 * The location of the file to be loaded.
+	 */
+	public String fileLocation;
+	/**
 	 * The entire abstract machine's memory. Each string in the array will have
 	 * a length of 4, representing the hex value stored there.
 	 */
