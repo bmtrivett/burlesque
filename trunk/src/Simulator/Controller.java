@@ -34,13 +34,14 @@ public class Controller implements ControllerInterface {
 	// Consolidate all instruction text.
 	private String getFileInst = "Press Enter to load "
 			+ MachineMain.machineModel.fileLocation + " into memory.\n";
+	private String getFileInst2 = "Enter the location of batch file you wish to load:\n";
 	private String runOrOptionsInst = "Select an option:\n"
 			+ "A) Choose run mode.\nB) Set instruction limit.\n";
 	private String modeSelectInst = "Select run mode:\n"
 			+ "A) Quiet mode.\nB) Trace mode.\nC) Step mode.\n";
 	private String optionsInst = "New instruction limit (1 to 2,147,483,647 "
 			+ "or -1 for DEFAULT):\n";
-	private String endInst = "Execution over, press Q to exit.\n"
+	private String endInst = "Execution over, please choose an option:\n"
 			+ "A) Load another file.\n" + "B) Reset Wileven Machine.\n"
 			+ "C) Quit.\n";
 	private String execInst = "Press enter to start ";
@@ -83,7 +84,10 @@ public class Controller implements ControllerInterface {
 		isEnd = false;
 
 		// Output first instruction to user.
+		if (MachineMain.machineModel.fileLocation != null){
 		MachineMain.machineView.outputText(getFileInst);
+		}else{MachineMain.machineView.outputText(getFileInst2);
+		}
 	}
 
 	/**
@@ -390,7 +394,9 @@ public class Controller implements ControllerInterface {
 
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
-
+			if(MachineMain.machineModel.fileLocation == null){
+			MachineMain.machineModel.fileLocation = text;
+			}
 			// Send the input to the loader.
 			try {
 				getFileError = InputInstructions
@@ -401,9 +407,9 @@ public class Controller implements ControllerInterface {
 
 			// Check if the loader returned an error finding the file.
 			if (getFileError != null) {
-				MachineMain.machineView.showError("FATAL ERROR: "
-						+ getFileError);
-				System.exit(0);
+				echoInput();
+				MachineMain.machineView.showError(getFileError);
+				MachineMain.machineView.showError(getFileInst2);
 			} else {
 				// If no error output new instructions and change
 				// action listener to next.
@@ -922,11 +928,22 @@ public class Controller implements ControllerInterface {
 			String text = MachineMain.machineView.getInput();
 			echoInput();
 
-			if (text.equals("q") || text.equals("Q")) {
+			if (text.equals("a") || text.equals("A")) {
+				// Display instructions and change action listener to getFile
+				MachineMain.machineView.outputText(getFileInst);
+				MachineMain.machineView.setListener(end, getFile);
+			} else if (text.equals("b") || text.equals("B")) {
+				// Restart Wileven Machine
+				MachineMain.machineView.dispose();
+				String emptyString = null;
+				MachineMain.Reset(emptyString);
+			} else if (text.equals("c") || text.equals("C")) {
 				// Close Wileven Machine
 				System.exit(0);
 			} else {
 				// Display error and instructions again.
+				MachineMain.machineView
+						.showError("Invalid response. Valid responses: A, B, C");
 				MachineMain.machineView.outputText(endInst);
 			}
 		}
