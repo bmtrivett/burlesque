@@ -106,7 +106,7 @@ public class LLPassOne {
 				// set the location
 				PLA = Utility.HexToDecimalValue(WilevenLoader.IPLA) + newPLA;
 				// add the length of the segment to the loaction
-				newPLA += WilevenLoader.place[0];
+				newPLA += WilevenLoader.place[count];
 				// get the index of the equals sign
 				int index = read.indexOf('=');
 				// get the name of the symbol
