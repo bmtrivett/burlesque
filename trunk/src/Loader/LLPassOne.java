@@ -43,7 +43,7 @@ public class LLPassOne {
 				return "There can not be mutiple files if one is absolute.";
 			}
 			// put the value of the start to the IPLA
-			WilvenLoader.IPLA = firstHeader;
+			WilevenLoader.IPLA = firstHeader;
 		} else {
 			// get the user input for the start address
 			System.out.print("Please enter a four digit "
@@ -95,9 +95,9 @@ public class LLPassOne {
 					.HexToDecimalValue(WilevenLoader.IPLA)
 					+ Utility.HexToDecimalValue(loc));
 			// put them into the external symbol table
-			WilevenLoader.externalSymbolTable.put(name, updatedPLA);
+			WilevenLoader.machineTables.externalSymbolTable.put(name, updatedPLA);
 			// check to see if it is already defined
-			if (WilevenLoader.externalSymbolTable.containsKey(name)) {
+			if (WilevenLoader.machineTables.externalSymbolTable.containsKey(name)) {
 				return "The .ENT " + name + " symbol has already been defined";
 			}
 			// read the next line
@@ -131,9 +131,9 @@ public class LLPassOne {
 						.HexToDecimalValue(WilevenLoader.IPLA)
 						+ Utility.HexToDecimalValue(loc));
 				// put them into the external symbol table
-				WilevenLoader.externalSymbolTable.put(name, updatedPLA);
+				WilevenLoader.machineTables.externalSymbolTable.put(name, updatedPLA);
 				// check to see if it is already defined
-				if (WilevenLoader.externalSymbolTable.containsKey(name)) {
+				if (WilevenLoader.machineTables.externalSymbolTable.containsKey(name)) {
 					return "The .ENT " + name
 							+ " symbol has already been defined";
 				}
