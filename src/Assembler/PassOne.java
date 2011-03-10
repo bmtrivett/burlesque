@@ -216,9 +216,7 @@ public class PassOne {
 					} else {
 						String comma = ",";
 						String entry = "";
-						String[] tempEntryArray = new String[2];
-						tempEntryArray[0] = "0000";
-						tempEntryArray[1] = "1";
+						String tempEntry = "0000";
 						int indexOfComma = read.indexOf(comma);
 						int startingIndex = 17;
 						int numOperands = 1;
@@ -243,7 +241,7 @@ public class PassOne {
 										+ lineCounter
 										+ " is longer than 6 characters.";
 							}
-							machineTables.externalSymbolTable.put(entry, tempEntryArray);
+							machineTables.externalSymbolTable.put(entry, tempEntry);
 							startingIndex = indexOfComma + 1;
 							indexOfComma = read.indexOf(comma, startingIndex);
 						}
@@ -258,7 +256,7 @@ public class PassOne {
 									+ lineCounter
 									+ " is longer than 6 characters.";
 						}
-						machineTables.externalSymbolTable.put(entry, tempEntryArray);
+						machineTables.externalSymbolTable.put(entry, tempEntry);
 					}
 				}
 
