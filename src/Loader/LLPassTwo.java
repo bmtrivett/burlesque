@@ -96,8 +96,12 @@ public class LLPassTwo {
 					// write it to the new file
 					bufferedWriter.write(read);
 					bufferedWriter.newLine();
-				} else if (read.charAt(0) == 'S') {
-					// Ignored, they are no longer needed.
+
+				} else if (read.charAt(0) == 'T') {
+					// write it to the new file
+					bufferedWriter.write(read);
+					bufferedWriter.newLine();
+
 				} else if (read.charAt(0) == 'X') {
 					// Update the last 9 bits with the value of the external
 					// symbol
