@@ -34,7 +34,7 @@ public class Controller implements ControllerInterface {
 	// Consolidate all instruction text.
 	private String getFileInst = "Press Enter to load "
 			+ MachineMain.machineModel.fileLocation + " into memory.\n";
-	private String getFileInst2 = "Enter the location of batch file you wish to load:\n";
+	private String getFileInst2 = "Enter the location of the object file you wish to load:\n";
 	private String runOrOptionsInst = "Select an option:\n"
 			+ "A) Choose run mode.\nB) Set instruction limit.\n";
 	private String modeSelectInst = "Select run mode:\n"
@@ -112,7 +112,7 @@ public class Controller implements ControllerInterface {
 		MachineMain.machineView
 				.outputText("\tMemory Address\tMemory Contents\n");
 		MachineMain.machineView
-				.outputText("\t--------------\t\t---------------\n");
+				.outputText("\t==============\t===============\n");
 
 		// Memory contents that have been altered are displayed
 		Integer counter = 0;
@@ -136,8 +136,8 @@ public class Controller implements ControllerInterface {
 		MachineMain.machineView
 				.outputText("\nGeneral Purpose Registers:\tR0  \tR1  \tR2  \tR3  "
 						+ "\tR4  \tR5  \tR6  \tR7  \n");
-		MachineMain.machineView.outputText("\t\t----\t----\t----\t----"
-				+ "\t----\t----\t----\t----\n");
+		MachineMain.machineView.outputText("\t\t====\t====\t====\t===="
+				+ "\t====\t====\t====\t====\n");
 		MachineMain.machineView.outputText("\t                          ");
 
 		// General purpose register contents display
@@ -152,7 +152,7 @@ public class Controller implements ControllerInterface {
 		// Program counter and CCR header
 		MachineMain.machineView
 				.outputText("\n\nProgram Counter\tCondition Code Registers:\tN\tZ\tP\n");
-		MachineMain.machineView.outputText("---------------\t\t\t\t-\t-\t-\n");
+		MachineMain.machineView.outputText("===============\t\t\t=\t=\t=\n");
 
 		// Program counter contents and CCR contents display
 		MachineMain.machineView
@@ -181,20 +181,26 @@ public class Controller implements ControllerInterface {
 	private void displayFull(int header) {
 		if (header == 0) {
 			MachineMain.machineView
-					.outputText("=============================="
-							+ "======================== Initial memory state ==========="
-							+ "=========================================\n");
+					.outputText("\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+							+ "<<<<<<<<<<<<<<<<<<<<<<<< Initial memory state >>>>>>>>>>>"
+							+ ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 		} else if (header == 1) {
 			MachineMain.machineView
-					.outputText("=============================="
-							+ "======================== Final memory state ============="
-							+ "========================================\n");
+					.outputText("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+							+ ">>>>>>>>>>>>>>>>>>>>>>>> Final memory state <<<<<<<<<<<<<"
+							+ "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 		}
 		displayAllMemory();
 		displayAllRegisters();
-		MachineMain.machineView.outputText("=============================="
-				+ "========================================================="
-				+ "====================================\n");
+		if (header == 0) {
+			MachineMain.machineView
+					.outputText("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+							+ ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+		} else if (header == 1) {
+			MachineMain.machineView
+					.outputText(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +
+							"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+		}
 	}
 
 	/*
@@ -337,18 +343,19 @@ public class Controller implements ControllerInterface {
 				counter++;
 			}
 			Interpreter.registerChanges[counter] = 0;
+			// Set register 7 to the program counter per specifications.
+			MachineMain.machineModel.registerMap.put(7,
+					MachineMain.machineModel.programCounter);
+			// Register 7 was altered, so record that in the interpreter.
+			counter = 0;
+			while (Interpreter.registerChanges[counter] != null) {
+				counter++;
+			}
+			Interpreter.registerChanges[counter] = 7;
 		} else {
 			error = "Trap type invalid.";
 		}
-		// Set register 7 to the program counter per specifications.
-		MachineMain.machineModel.registerMap.put(7,
-				MachineMain.machineModel.programCounter);
-		// Register 7 was altered, so record that in the interpreter.
-		Integer counter = 0;
-		while (Interpreter.registerChanges[counter] != null) {
-			counter++;
-		}
-		Interpreter.registerChanges[counter] = 7;
+
 		return error;
 	}
 
@@ -397,6 +404,7 @@ public class Controller implements ControllerInterface {
 			String text = MachineMain.machineView.getInput();
 			if (MachineMain.machineModel.fileLocation == null) {
 				MachineMain.machineModel.fileLocation = text;
+				echoInput();
 			}
 			// Send the input to the loader.
 			try {
@@ -410,11 +418,12 @@ public class Controller implements ControllerInterface {
 			if (getFileError != null) {
 				echoInput();
 				MachineMain.machineView.showError(getFileError);
-				MachineMain.machineView.showError(getFileInst2);
+				MachineMain.machineView.outputText(getFileInst2);
 			} else {
 				// If no error output new instructions and change
 				// action listener to next.
-				MachineMain.machineView.outputText("Loading...");
+				MachineMain.machineView.outputText("Loading: "
+						+ MachineMain.machineModel.fileLocation + "\n\n");
 				MachineMain.machineView.outputText(runOrOptionsInst);
 				MachineMain.machineView.setListener(getFile, runOrOptions);
 			}
@@ -676,7 +685,7 @@ public class Controller implements ControllerInterface {
 						MachineMain.machineView
 								.outputText("\n\tMemory Address\tNew Memory Contents\n");
 						MachineMain.machineView
-								.outputText("\t--------------\t\t-------------------\n");
+								.outputText("\t==============\t===================\n");
 
 						// Memory contents that have been altered are displayed
 						Integer counter = 0;
@@ -698,7 +707,7 @@ public class Controller implements ControllerInterface {
 						MachineMain.machineView
 								.outputText("\n\tRegister Number\tNew Register Contents\n");
 						MachineMain.machineView
-								.outputText("\t---------------\t\t---------------------\n");
+								.outputText("\t===============\t=====================\n");
 
 						// Register contents that have been altered are
 						// displayed
@@ -718,7 +727,7 @@ public class Controller implements ControllerInterface {
 						// whether they have changed or not
 						MachineMain.machineView
 								.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
-						MachineMain.machineView.outputText("\t\t\t-\t-\t-\n");
+						MachineMain.machineView.outputText("\t\t\t=\t=\t=\n");
 						MachineMain.machineView
 								.outputText("\t\t                         \t"
 										+ Utility
@@ -827,7 +836,7 @@ public class Controller implements ControllerInterface {
 						MachineMain.machineView
 								.outputText("\n\tMemory Address\tNew Memory Contents\n");
 						MachineMain.machineView
-								.outputText("\t--------------\t\t-------------------\n");
+								.outputText("\t==============\t===================\n");
 
 						// Memory contents that have been altered are displayed
 						Integer counter = 0;
@@ -849,7 +858,7 @@ public class Controller implements ControllerInterface {
 						MachineMain.machineView
 								.outputText("\n\tRegister Number\tNew Register Contents\n");
 						MachineMain.machineView
-								.outputText("\t---------------\t\t---------------------\n");
+								.outputText("\t===============\t=====================\n");
 
 						// Register contents that have been altered are
 						// displayed
@@ -869,7 +878,7 @@ public class Controller implements ControllerInterface {
 						// whether they have changed or not
 						MachineMain.machineView
 								.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
-						MachineMain.machineView.outputText("\t\t\t-\t-\t-\n");
+						MachineMain.machineView.outputText("\t\t\t=\t=\t=\n");
 						MachineMain.machineView
 								.outputText("\t\t                         \t"
 										+ Utility
@@ -931,7 +940,8 @@ public class Controller implements ControllerInterface {
 
 			if (text.equals("a") || text.equals("A")) {
 				// Display instructions and change action listener to getFile
-				MachineMain.machineView.outputText(getFileInst);
+				MachineMain.machineView.outputText(getFileInst2);
+				MachineMain.machineModel.fileLocation = null;
 				MachineMain.machineView.setListener(end, getFile);
 			} else if (text.equals("b") || text.equals("B")) {
 				// Restart Wileven Machine
