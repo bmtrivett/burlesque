@@ -37,6 +37,9 @@ public class InputInstructions {
 		FileReader reader = new FileReader(input);
 		BufferedReader file = new BufferedReader(reader);
 		read = file.readLine();
+		if (read == null){
+			return "Expected header record on first line but it was empty.";
+		}
 		if (read.charAt(0) != 'H') {
 			return "The header record is incorrect in the file it does " +
 					"not begin with H on line 1.";
