@@ -39,22 +39,11 @@ public class InputInstructions {
 		read = file.readLine();
 		if (read.charAt(0) != 'H') {
 			return "The header record is incorrect in the file it does " +
-					"not begin with H on line  0.";
+					"not begin with H on line 1.";
 		}
 
-		count = 0;
-		while (count < 15) {
-			char ch = read.charAt(count);
-			//
-			//do we actually wanna take out is lowercase
-			//Character.isLowerCase(ch)
-			if ( ch == ' ') {
-				return "The header record is incorrect in the file on line  0.";
-			}
-			count++;
-		}
 		if (read.length() != 15) {
-			return "The header record is incorrect in the file on line  0. The " +
+			return "The header record is incorrect in the file on line 0. The " +
 					"length is not equal to 15";
 		}
 		// gets just the first line.
@@ -77,10 +66,6 @@ public class InputInstructions {
 			int counter = 2;
 
 			read = file.readLine();
-
-			if (read.charAt(0) == '\n') {
-				return "The text record is incorrect in the file please try a new file.";
-			}
 
 			if (read.substring(0, 1).equals("E")) {
 				//i think we changed this and it made it worse????

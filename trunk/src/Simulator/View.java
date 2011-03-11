@@ -21,7 +21,7 @@ public class View extends JFrame implements ViewInterface {
 	private static final long serialVersionUID = 1L;
 
 	private static final Integer DEFAULT_CONSOLE_WIDTH = 80;
-	private static final Integer DEFAULT_CONSOLE_HEIGHT = 40;
+	private static final Integer DEFAULT_CONSOLE_HEIGHT = 45;
 	private static JTextField inputField;
 	private static JTextArea outputField;
 
@@ -55,6 +55,8 @@ public class View extends JFrame implements ViewInterface {
 		this.setContentPane(content);
 		this.pack();
 		this.setTitle("Wileven Machine");
+		this.setResizable(false);
+		this.setLocationByPlatform(true);
 
 		// Set the window closing event.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,6 +104,16 @@ public class View extends JFrame implements ViewInterface {
 	public void setListener(ActionListener old, ActionListener current) {
 		inputField.removeActionListener(old);
 		inputField.addActionListener(current);
+	}
+	
+	/* (non-Javadoc)
+	 * @see ViewInterface#setListener(java.awt.event.ActionListener, java.awt.event.ActionListener)
+	 */
+	public void removeAllListeners() {
+		ActionListener[] tempArray = inputField.getActionListeners();
+		for(ActionListener tempAction : tempArray){
+			inputField.removeActionListener(tempAction);
+		}
 	}
 	
 	/* (non-Javadoc)
