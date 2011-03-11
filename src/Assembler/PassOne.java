@@ -104,7 +104,7 @@ public class PassOne {
 			machineTables.isRelative = false;
 		}
 		if (machineTables.isRelative) {
-			machineTables.symbolLocationTable.put(origLabel, 
+			machineTables.symbolLocationTable.put(origLabel,
 					Utility.DecimalValueToHex(machineTables.locationCounter));
 		}
 		String origin = Utility
@@ -145,8 +145,7 @@ public class PassOne {
 				}
 
 				// Remove in line comments and write them to comments.txt.
-				comment = ";";
-				index4 = read.indexOf(comment);
+				index4 = read.indexOf(';');
 				if (index4 != -1) {
 					String inLineComment = read.substring(index4);
 					bufferedWriterComments.write(lineCounter + "\t-"
@@ -206,8 +205,7 @@ public class PassOne {
 									+ lineCounter
 									+ " is longer than 6 characters.";
 						}
-						machineTables.symbolLocationTable.put(entry,
-								tempEntry);
+						machineTables.symbolLocationTable.put(entry, tempEntry);
 					}
 				} else if (entext.equals(".EXT ")) {
 					if (!machineTables.isRelative) {
@@ -245,7 +243,8 @@ public class PassOne {
 										+ lineCounter
 										+ " is longer than 6 characters.";
 							}
-							machineTables.externalSymbolTable.put(entry, tempEntry);
+							machineTables.externalSymbolTable.put(entry,
+									tempEntry);
 							startingIndex = indexOfComma + 1;
 							indexOfComma = read.indexOf(comma, startingIndex);
 						}
@@ -552,7 +551,7 @@ public class PassOne {
 
 				// Check for literals to add to the literal table.
 				int index3 = read.indexOf("=");
-				if (index3 != -1) {
+				if (index3 != -1 && !overSubstring(read, 9, 14).equals(".STRZ")) {
 					if (!overSubstring(read, 9, 14).equals("LD   ")) {
 						return "Literal used in an operation other than LD on line "
 								+ lineCounter + ".";
@@ -711,7 +710,8 @@ public class PassOne {
 
 		// Check to see that all pgoffset9 addresses are in the same page
 		// as the location counter.
-		Iterator<String> pgoffsetIterator = machineTables.passOnePgoffsetCheck.keySet().iterator();
+		Iterator<String> pgoffsetIterator = machineTables.passOnePgoffsetCheck
+				.keySet().iterator();
 		while (pgoffsetIterator.hasNext()) {
 			String pgoffsetKey = pgoffsetIterator.next();
 			Integer[] pgArray = machineTables.passOnePgoffsetCheck
@@ -724,7 +724,8 @@ public class PassOne {
 							+ pgArray[1] + " is not on the same page as the "
 							+ "location counter.";
 				}
-			} else if (!machineTables.externalSymbolTable.containsKey(pgoffsetKey.trim())) {
+			} else if (!machineTables.externalSymbolTable
+					.containsKey(pgoffsetKey.trim())) {
 				return "The symbol " + pgoffsetKey.trim() + " on line "
 						+ pgArray[1] + " is never defined.";
 			}
@@ -753,14 +754,15 @@ public class PassOne {
 
 		// Check location of all symbols defined in external symbol table.
 		if (machineTables.symbolLocationTable.size() > 0) {
-			Iterator<String> iteratorOfEntryKeys = machineTables.symbolLocationTable.
-			keySet().iterator();
+			Iterator<String> iteratorOfEntryKeys = machineTables.symbolLocationTable
+					.keySet().iterator();
 			while (iteratorOfEntryKeys.hasNext()) {
 				String entryKey = iteratorOfEntryKeys.next();
 				if (machineTables.symbolTable.containsKey(entryKey)) {
 					String entryLocation = machineTables.symbolTable
 							.get(entryKey)[0];
-					machineTables.symbolLocationTable.put(entryKey, entryLocation);
+					machineTables.symbolLocationTable.put(entryKey,
+							entryLocation);
 				} else {
 					return "The .ENT symbol \"" + entryKey + "\" is undefined.";
 				}

@@ -100,6 +100,7 @@ public class WilevenAssembler {
 			if (firstPassError != null) {
 				System.out.println("ERROR in file " + allFileNames[count][0]
 						+ ": " + firstPassError);
+				System.exit(0);
 			}
 
 			// Execute pass two.
@@ -111,6 +112,7 @@ public class WilevenAssembler {
 			if (secondPassError != null) {
 				System.out.println("ERROR in file " + allFileNames[count][0]
 						+ ": " + secondPassError);
+				System.exit(0);
 			}
 			count++;
 		}
