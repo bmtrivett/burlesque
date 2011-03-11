@@ -14,12 +14,12 @@ public class MachineMain {
 	public static Model machineModel;
 
 	public static void main(String[] args) {
-		if ((args.length == 0) || (args[0] == null)) {
-			System.out
-					.println("ERROR: The first argument must be the location of the file to be simulated.");
-			System.exit(0);
+		if (args.length > 0) {
+			Reset(args[0]);
+		} else {
+			String empty = null;
+			Reset(empty);
 		}
-		Reset(args[0]);
 	}
 
 	/**

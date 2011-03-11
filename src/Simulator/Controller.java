@@ -84,9 +84,10 @@ public class Controller implements ControllerInterface {
 		isEnd = false;
 
 		// Output first instruction to user.
-		if (MachineMain.machineModel.fileLocation != null){
-		MachineMain.machineView.outputText(getFileInst);
-		}else{MachineMain.machineView.outputText(getFileInst2);
+		if (MachineMain.machineModel.fileLocation != null) {
+			MachineMain.machineView.outputText(getFileInst);
+		} else {
+			MachineMain.machineView.outputText(getFileInst2);
 		}
 	}
 
@@ -394,8 +395,8 @@ public class Controller implements ControllerInterface {
 
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
-			if(MachineMain.machineModel.fileLocation == null){
-			MachineMain.machineModel.fileLocation = text;
+			if (MachineMain.machineModel.fileLocation == null) {
+				MachineMain.machineModel.fileLocation = text;
 			}
 			// Send the input to the loader.
 			try {
