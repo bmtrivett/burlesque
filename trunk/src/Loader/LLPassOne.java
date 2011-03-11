@@ -20,7 +20,7 @@ public class LLPassOne {
 	 * @throws IOException
 	 */
 	public static String passOne(String[] names) throws IOException {
-		int PLA = Utility.HexToDecimalValue(WilevenLoader.IPLA);
+
 		int total = WilevenLoader.totalSegLength;
 		String read = "";
 
@@ -47,6 +47,7 @@ public class LLPassOne {
 				isNotCorrectInput = false;
 			}
 		}
+		int PLA = Utility.HexToDecimalValue(WilevenLoader.IPLA);
 		
 		// iterate through all files and add data to external symbol table
 		int count = 0;
