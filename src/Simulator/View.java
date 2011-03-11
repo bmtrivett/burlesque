@@ -1,6 +1,8 @@
 package Simulator;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 
@@ -21,7 +23,7 @@ public class View extends JFrame implements ViewInterface {
 	private static final long serialVersionUID = 1L;
 
 	private static final Integer DEFAULT_CONSOLE_WIDTH = 80;
-	private static final Integer DEFAULT_CONSOLE_HEIGHT = 45;
+	private static final Integer DEFAULT_CONSOLE_HEIGHT = 40;
 	private static JTextField inputField;
 	private static JTextArea outputField;
 
@@ -56,10 +58,19 @@ public class View extends JFrame implements ViewInterface {
 		this.pack();
 		this.setTitle("Wileven Machine");
 		this.setResizable(false);
-		this.setLocationByPlatform(true);
 
+		// Set the window in the middle of the screen
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		int w = this.getSize().width;
+		int h = this.getSize().height;
+		int x = (dim.width-w)/2;
+		int y = (dim.height-h)/2;    
+		this.setLocation(x, y);
+		
 		// Set the window closing event.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// Set focus to text field
 		inputField.requestFocusInWindow();
 	}
 
