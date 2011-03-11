@@ -38,7 +38,6 @@ public class PassTwo {
 				ppOutName));
 		String textRecord = null;
 		String pTextRecord = null;
-
 		// Add all of the external symbols to the symbol table.
 		if (machineTables.externalSymbolTable.size() > 0) {
 			String[] extTableKeys = machineTables.externalSymbolTable.keySet()
@@ -193,7 +192,7 @@ public class PassTwo {
 					// If the operand is a symbol, hex, or decimal value,
 					// get that value in decimal form.
 					Boolean usedRelativeSymbol = false;
-					String key = op[0];
+					String key = op[0].toString();
 					Integer bin = 0;
 					Boolean usedExternalSymbol = false;
 					if (machineTables.externalSymbolTable.containsKey(op[0])) {
@@ -203,7 +202,7 @@ public class PassTwo {
 						String[] temp = machineTables.symbolTable.get(op[0]);
 						bin = Integer.parseInt(temp[0], 16);
 						if (temp[1].equals("1")) {
-							usedExternalSymbol = true;
+							usedRelativeSymbol = true;
 						}
 					} else if (op[0].charAt(0) == 'x') {
 						bin = Integer.parseInt(op[0].substring(1), 16);
@@ -244,6 +243,7 @@ public class PassTwo {
 
 					// Build the text record.
 					if (usedExternalSymbol) {
+						System.out.println("Key: " + key + ".");
 						stringBuffer.append("X").append(hexAdress)
 								.append(textRecord).append(key);
 						pTextRecord = stringBuffer.toString();
@@ -505,7 +505,7 @@ public class PassTwo {
 					// get that value in decimal form.
 					Boolean usedRelativeSymbol = false;
 					Boolean usedExternalSymbol = false;
-					String key = op[1];
+					String key = op[1].toString();
 					if (machineTables.externalSymbolTable.containsKey(op[1])) {
 						usedExternalSymbol = true;
 					}
@@ -611,7 +611,7 @@ public class PassTwo {
 					Boolean usedRelativeSymbol = false;
 					Integer bin;
 					Boolean usedExternalSymbol = false;
-					String key = op[0];
+					String key = op[0].toString();
 					if (machineTables.externalSymbolTable.containsKey(op[0])) {
 						usedExternalSymbol = true;
 					}
