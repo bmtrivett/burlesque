@@ -243,7 +243,6 @@ public class PassTwo {
 
 					// Build the text record.
 					if (usedExternalSymbol) {
-						System.out.println("Key: " + key + ".");
 						stringBuffer.append("X").append(hexAdress)
 								.append(textRecord).append(key);
 						pTextRecord = stringBuffer.toString();
