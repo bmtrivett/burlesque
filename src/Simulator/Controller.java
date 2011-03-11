@@ -3,7 +3,6 @@ package Simulator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -189,6 +188,11 @@ public class Controller implements ControllerInterface {
 					.outputText("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 							+ ">>>>>>>>>>>>>>>>>>>>>>>> Final memory state <<<<<<<<<<<<<"
 							+ "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+		} else if (header == 2){
+			MachineMain.machineView
+			.outputText("\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+					+ "<<<<<<<<<<<<<<<<<<<<<<< Current memory state >>>>>>>>>>"
+					+ ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 		}
 		displayAllMemory();
 		displayAllRegisters();
@@ -196,10 +200,10 @@ public class Controller implements ControllerInterface {
 			MachineMain.machineView
 					.outputText("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 							+ ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-		} else if (header == 1) {
+		} else if (header == 1 || header == 2) {
 			MachineMain.machineView
-					.outputText(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +
-							"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+					.outputText(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+							+ "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 		}
 	}
 
@@ -404,28 +408,30 @@ public class Controller implements ControllerInterface {
 			String text = MachineMain.machineView.getInput();
 			if (MachineMain.machineModel.fileLocation == null) {
 				MachineMain.machineModel.fileLocation = text;
-				echoInput();
 			}
-			// Send the input to the loader.
-			try {
-				getFileError = InputInstructions
-						.FindFile(MachineMain.machineModel.fileLocation);
-			} catch (IOException e1) {
-				getFileError = "An error has occurred while loading this file.";
-			}
+			echoInput();
+			if (always(text)) {
+				// Send the input to the loader.
+				try {
+					getFileError = InputInstructions
+							.FindFile(MachineMain.machineModel.fileLocation);
+				} catch (IOException e1) {
+					getFileError = "An error has occurred while loading this file.";
+				}
 
-			// Check if the loader returned an error finding the file.
-			if (getFileError != null) {
-				echoInput();
-				MachineMain.machineView.showError(getFileError);
-				MachineMain.machineView.outputText(getFileInst2);
-			} else {
-				// If no error output new instructions and change
-				// action listener to next.
-				MachineMain.machineView.outputText("Loading: "
-						+ MachineMain.machineModel.fileLocation + "\n\n");
-				MachineMain.machineView.outputText(runOrOptionsInst);
-				MachineMain.machineView.setListener(getFile, runOrOptions);
+				// Check if the loader returned an error finding the file.
+				if (getFileError != null) {
+					echoInput();
+					MachineMain.machineView.showError(getFileError);
+					MachineMain.machineView.outputText(getFileInst2);
+				} else {
+					// If no error output new instructions and change
+					// action listener to next.
+					MachineMain.machineView.outputText("Loading: "
+							+ MachineMain.machineModel.fileLocation + "\n\n");
+					MachineMain.machineView.outputText(runOrOptionsInst);
+					MachineMain.machineView.setListener(getFile, runOrOptions);
+				}
 			}
 		}
 	}
@@ -442,23 +448,28 @@ public class Controller implements ControllerInterface {
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
 			echoInput();
+			if (always(text)) {
 
-			if (text.equals("a") || text.equals("A")) {
-				// Display instructions and change action listener to run mode
-				// select
-				MachineMain.machineView.outputText(modeSelectInst);
-				MachineMain.machineView.setListener(runOrOptions, modeSelect);
-			} else if (text.equals("b") || text.equals("B")) {
-				// Display instructions and change action listener to options
-				MachineMain.machineView.outputText("CURRENT: "
-						+ MachineMain.machineModel.instructionLimit + '\n'
-						+ optionsInst);
-				MachineMain.machineView.setListener(runOrOptions, options);
-			} else {
-				// Display error and instructions again.
-				MachineMain.machineView
-						.showError("Invalid response. Valid responses: A, B");
-				MachineMain.machineView.outputText(runOrOptionsInst);
+				if (text.equals("a") || text.equals("A")) {
+					// Display instructions and change action listener to run
+					// mode
+					// select
+					MachineMain.machineView.outputText(modeSelectInst);
+					MachineMain.machineView.setListener(runOrOptions,
+							modeSelect);
+				} else if (text.equals("b") || text.equals("B")) {
+					// Display instructions and change action listener to
+					// options
+					MachineMain.machineView.outputText("CURRENT: "
+							+ MachineMain.machineModel.instructionLimit + '\n'
+							+ optionsInst);
+					MachineMain.machineView.setListener(runOrOptions, options);
+				} else {
+					// Display error and instructions again.
+					MachineMain.machineView
+							.showError("Invalid response. Valid responses: A, B");
+					MachineMain.machineView.outputText(runOrOptionsInst);
+				}
 			}
 		}
 	}
@@ -475,33 +486,44 @@ public class Controller implements ControllerInterface {
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
 			echoInput();
+			if (always(text)) {
 
-			// Check if input was -1, if so set instruction limit to default
-			// and return to previous action listener.
-			if (text.equals("-1")) {
-				MachineMain.machineModel.instructionLimit = Model.DEFAULT_INSTRUCTION_LIMIT;
-				MachineMain.machineView.outputText(runOrOptionsInst);
-				MachineMain.machineView.setListener(options, runOrOptions);
-			} else {
-				// Check for possible exception
-				Boolean errorExists = false;
-				try {
-					Integer.parseInt(text);
-				} catch (NumberFormatException err) {
-					errorExists = true;
-				}
+				// Check if input was -1, if so set instruction limit to default
+				// and return to previous action listener.
+				if (text.equals("-1")) {
+					MachineMain.machineModel.instructionLimit = Model.DEFAULT_INSTRUCTION_LIMIT;
+					MachineMain.machineView.outputText(runOrOptionsInst);
+					MachineMain.machineView.setListener(options, runOrOptions);
+				} else {
+					// Check for possible exception
+					Boolean errorExists = false;
+					try {
+						Integer.parseInt(text);
+					} catch (NumberFormatException err) {
+						errorExists = true;
+					}
 
-				// If there was no exception, convert text to integer
-				if (!errorExists) {
-					int newInstructionLimit = Integer.parseInt(text);
-					if (newInstructionLimit >= 1
-							&& newInstructionLimit <= Integer.MAX_VALUE) {
-						// Set new instruction limit, display instructions and
-						// change action listener to run or options.
-						MachineMain.machineModel.instructionLimit = newInstructionLimit;
-						MachineMain.machineView.outputText(runOrOptionsInst);
-						MachineMain.machineView.setListener(options,
-								runOrOptions);
+					// If there was no exception, convert text to integer
+					if (!errorExists) {
+						int newInstructionLimit = Integer.parseInt(text);
+						if (newInstructionLimit >= 1
+								&& newInstructionLimit <= Integer.MAX_VALUE) {
+							// Set new instruction limit, display instructions
+							// and
+							// change action listener to run or options.
+							MachineMain.machineModel.instructionLimit = newInstructionLimit;
+							MachineMain.machineView
+									.outputText(runOrOptionsInst);
+							MachineMain.machineView.setListener(options,
+									runOrOptions);
+						} else {
+							// Display error and instructions again.
+							MachineMain.machineView
+									.showError("Invalid response. Valid responses: 1 to 2,147,483,647, -1");
+							MachineMain.machineView.outputText("CURRENT: "
+									+ MachineMain.machineModel.instructionLimit
+									+ '\n' + optionsInst);
+						}
 					} else {
 						// Display error and instructions again.
 						MachineMain.machineView
@@ -510,13 +532,6 @@ public class Controller implements ControllerInterface {
 								+ MachineMain.machineModel.instructionLimit
 								+ '\n' + optionsInst);
 					}
-				} else {
-					// Display error and instructions again.
-					MachineMain.machineView
-							.showError("Invalid response. Valid responses: 1 to 2,147,483,647, -1");
-					MachineMain.machineView.outputText("CURRENT: "
-							+ MachineMain.machineModel.instructionLimit + '\n'
-							+ optionsInst);
 				}
 			}
 		}
@@ -533,29 +548,31 @@ public class Controller implements ControllerInterface {
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
 			echoInput();
+			if (always(text)) {
 
-			if (text.equals("a") || text.equals("A")) {
-				// Display instructions and change action listener to quiet
-				MachineMain.machineView.outputText(execInst
-						+ MachineMain.machineModel.programName + ".\n\n");
-				MachineMain.machineView.setListener(modeSelect, quiet);
-			} else if (text.equals("b") || text.equals("B")) {
-				// Display instructions and change action listener to trace
-				MachineMain.machineView.outputText(execInst
-						+ MachineMain.machineModel.programName + ".\n\n");
-				MachineMain.machineView.setListener(modeSelect, trace);
-			} else if (text.equals("c") || text.equals("C")) {
-				// Set step instruction counter to 0.
-				stepExecInst = 0;
-				// Display instructions and change action listener to step
-				MachineMain.machineView.outputText(execInst
-						+ MachineMain.machineModel.programName + ".\n\n");
-				MachineMain.machineView.setListener(modeSelect, step);
-			} else {
-				// Display error and instructions again.
-				MachineMain.machineView
-						.showError("Invalid response. Valid responses: A, B, C");
-				MachineMain.machineView.outputText(modeSelectInst);
+				if (text.equals("a") || text.equals("A")) {
+					// Display instructions and change action listener to quiet
+					MachineMain.machineView.outputText(execInst
+							+ MachineMain.machineModel.programName + ".\n\n");
+					MachineMain.machineView.setListener(modeSelect, quiet);
+				} else if (text.equals("b") || text.equals("B")) {
+					// Display instructions and change action listener to trace
+					MachineMain.machineView.outputText(execInst
+							+ MachineMain.machineModel.programName + ".\n\n");
+					MachineMain.machineView.setListener(modeSelect, trace);
+				} else if (text.equals("c") || text.equals("C")) {
+					// Set step instruction counter to 0.
+					stepExecInst = 0;
+					// Display instructions and change action listener to step
+					MachineMain.machineView.outputText(execInst
+							+ MachineMain.machineModel.programName + ".\n\n");
+					MachineMain.machineView.setListener(modeSelect, step);
+				} else {
+					// Display error and instructions again.
+					MachineMain.machineView
+							.showError("Invalid response. Valid responses: A, B, C");
+					MachineMain.machineView.outputText(modeSelectInst);
+				}
 			}
 		}
 	}
@@ -568,51 +585,62 @@ public class Controller implements ControllerInterface {
 	 */
 	public class QuietMode implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (!isExecuting) {
-				isExecuting = true;
-				MachineMain.machineView.outputText("Executing...\n");
+			// Take in the input.
+			String text = MachineMain.machineView.getInput();
+			echoInput();
+			if (always(text)) {
 
-				// Run the interpreter until the instruction limit is reached.
-				int instructionCount = 0;
-				while (instructionCount < MachineMain.machineModel.instructionLimit) {
-					// Create an instance of the interpreter
-					Interpreter interQuiet = new Interpreter();
-					// Execute an instruction and get information on what
-					// happened.
-					String executeError = interQuiet.ExecuteAnInstruction();
-					// Check if the loader returned an error finding the file.
-					if (executeError != null) {
-						// Execute trap or debug instructions if they occurred
-						if (executeError.substring(0, 4).equals("TRAP")) {
-							// Execute the trap
-							String trapError = executeTrap(executeError);
-							// Check for errors or HALT command.
-							if (trapError != null) {
-								if (trapError.equals("HALT")) {
-									break;
-								} else {
-									MachineMain.machineView
-											.outputText(trapError + '\n');
+				if (!isExecuting) {
+					isExecuting = true;
+					MachineMain.machineView.outputText("Executing...\n");
+
+					// Run the interpreter until the instruction limit is
+					// reached.
+					int instructionCount = 0;
+					while (instructionCount < MachineMain.machineModel.instructionLimit) {
+						// Create an instance of the interpreter
+						Interpreter interQuiet = new Interpreter();
+						// Execute an instruction and get information on what
+						// happened.
+						String executeError = interQuiet.ExecuteAnInstruction();
+						// Check if the loader returned an error finding the
+						// file.
+						if (executeError != null) {
+							// Execute trap or debug instructions if they
+							// occurred
+							if (executeError.substring(0, 4).equals("TRAP")) {
+								// Execute the trap
+								String trapError = executeTrap(executeError);
+								// Check for errors or HALT command.
+								if (trapError != null) {
+									if (trapError.equals("HALT")) {
+										break;
+									} else {
+										MachineMain.machineView
+												.outputText(trapError + '\n');
+									}
 								}
+							} else if (executeError.substring(0, 4).equals(
+									"DBUG")) {
+								// Display registers if DBUG instruction occurs.
+								displayAllRegisters();
+							} else if (Utility.isHexString(executeError
+									.substring(0, 4))) {
+								// Program counter was altered successfully.
+							} else {
+								MachineMain.machineView
+										.outputText(executeError + '\n');
 							}
-						} else if (executeError.substring(0, 4).equals("DBUG")) {
-							// Display registers if DBUG instruction occurs.
-							displayAllRegisters();
-						} else if (Utility.isHexString(executeError.substring(
-								0, 4))) {
-							// Program counter was altered successfully.
-						} else {
-							MachineMain.machineView
-									.outputText(executeError + '\n');
 						}
-					}
 
-					instructionCount++;
+						instructionCount++;
+					}
+					// Output new instructions and change action listener to
+					// end.
+					MachineMain.machineView.outputText('\n' + endInst);
+					isExecuting = false;
+					MachineMain.machineView.setListener(quiet, end);
 				}
-				// Output new instructions and change action listener to end.
-				MachineMain.machineView.outputText('\n' + endInst);
-				isExecuting = false;
-				MachineMain.machineView.setListener(quiet, end);
 			}
 		}
 	}
@@ -625,140 +653,155 @@ public class Controller implements ControllerInterface {
 	 */
 	public class TraceMode implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (!isExecuting) {
-				isExecuting = true;
-				MachineMain.machineView.outputText("Executing...\n");
-				// Output initial memory contents
-				displayFull(0);
+			// Take in the input.
+			String text = MachineMain.machineView.getInput();
+			echoInput();
+			if (always(text)) {
+				if (!isExecuting) {
+					isExecuting = true;
+					MachineMain.machineView.outputText("Executing...\n");
+					// Output initial memory contents
+					displayFull(0);
 
-				// Run the interpreter until the instruction limit is reached.
-				int instructionCount = 0;
-				while (instructionCount < MachineMain.machineModel.instructionLimit) {
-					// Display current program counter contents
-					MachineMain.machineView.outputText("\nProgram Counter: "
-							+ MachineMain.machineModel.programCounter);
+					// Run the interpreter until the instruction limit is
+					// reached.
+					int instructionCount = 0;
+					while (instructionCount < MachineMain.machineModel.instructionLimit) {
+						// Display current program counter contents
+						MachineMain.machineView
+								.outputText("\nProgram Counter: "
+										+ MachineMain.machineModel.programCounter);
 
-					// Create an instance of the interpreter
-					Interpreter interTrace = new Interpreter();
+						// Create an instance of the interpreter
+						Interpreter interTrace = new Interpreter();
 
-					// Execute an instruction and get information on what
-					// happened.
-					String executeError = interTrace.ExecuteAnInstruction();
-					String instName = Interpreter.instruction;
+						// Execute an instruction and get information on what
+						// happened.
+						String executeError = interTrace.ExecuteAnInstruction();
+						String instName = Interpreter.instruction;
 
-					// Display the instruction being executed
-					MachineMain.machineView.outputText("\n\nInstruction: "
-							+ instName + '\n');
+						// Display the instruction being executed
+						MachineMain.machineView.outputText("\n\nInstruction: "
+								+ instName + '\n');
 
-					// Check if the loader returned an error finding the file.
-					if (executeError != null) {
-						// Execute trap or debug instructions if they occurred
-						if (executeError.substring(0, 4).equals("TRAP")) {
-							// Execute the trap
-							String trapError = executeTrap(executeError);
+						// Check if the loader returned an error finding the
+						// file.
+						if (executeError != null) {
+							// Execute trap or debug instructions if they
+							// occurred
+							if (executeError.substring(0, 4).equals("TRAP")) {
+								// Execute the trap
+								String trapError = executeTrap(executeError);
 
-							// Check for errors or HALT command.
-							if (trapError != null) {
-								if (trapError.equals("HALT")) {
-									break;
-								} else {
-									MachineMain.machineView
-											.outputText(trapError + '\n');
+								// Check for errors or HALT command.
+								if (trapError != null) {
+									if (trapError.equals("HALT")) {
+										break;
+									} else {
+										MachineMain.machineView
+												.outputText(trapError + '\n');
+									}
 								}
+							} else if (executeError.substring(0, 4).equals(
+									"DBUG")) {
+								// Display registers if DBUG instruction occurs.
+								displayAllRegisters();
+							} else if (Utility.isHexString(executeError
+									.substring(0, 4))) {
+								// Program counter was altered successfully.
+							} else {
+								MachineMain.machineView
+										.outputText(executeError + '\n');
 							}
-						} else if (executeError.substring(0, 4).equals("DBUG")) {
-							// Display registers if DBUG instruction occurs.
-							displayAllRegisters();
-						} else if (Utility.isHexString(executeError.substring(
-								0, 4))) {
-							// Program counter was altered successfully.
-						} else {
+						}
+						String[] memAltered = Interpreter.memoryChanges;
+						Integer[] regAltered = Interpreter.registerChanges;
+						// If memory was altered, display it
+						if (memAltered[0] != null) {
+							// Memory header
 							MachineMain.machineView
-									.outputText(executeError + '\n');
-						}
-					}
-					String[] memAltered = Interpreter.memoryChanges;
-					Integer[] regAltered = Interpreter.registerChanges;
-					// If memory was altered, display it
-					if (memAltered[0] != null) {
-						// Memory header
-						MachineMain.machineView
-								.outputText("\n\tMemory Address\tNew Memory Contents\n");
-						MachineMain.machineView
-								.outputText("\t==============\t===================\n");
-
-						// Memory contents that have been altered are displayed
-						Integer counter = 0;
-						while (memAltered[counter] != null) {
+									.outputText("\n\tMemory Address\tNew Memory Contents\n");
 							MachineMain.machineView
-									.outputText('\t'
-											+ memAltered[counter]
-											+ "          \t\t"
-											+ MachineMain.machineModel.memoryArray[Utility
-													.HexToDecimalValue(memAltered[counter])]
-											+ '\n');
-							counter++;
-						}
-					}
+									.outputText("\t==============\t===================\n");
 
-					// If registers were altered, display them
-					if (regAltered[0] != null) {
-						// Register header
-						MachineMain.machineView
-								.outputText("\n\tRegister Number\tNew Register Contents\n");
-						MachineMain.machineView
-								.outputText("\t===============\t=====================\n");
-
-						// Register contents that have been altered are
-						// displayed
-						Integer counter = 0;
-						while (regAltered[counter] != null) {
-							MachineMain.machineView.outputText("\tR"
-									+ Utility.DecimalValueToHex(
-											regAltered[counter]).substring(3)
-									+ "             \t\t"
-									+ MachineMain.machineModel.registerMap
-											.get(regAltered[counter]) + '\n');
-
-							counter++;
+							// Memory contents that have been altered are
+							// displayed
+							Integer counter = 0;
+							while (memAltered[counter] != null) {
+								MachineMain.machineView
+										.outputText('\t'
+												+ memAltered[counter]
+												+ "          \t\t"
+												+ MachineMain.machineModel.memoryArray[Utility
+														.HexToDecimalValue(memAltered[counter])]
+												+ '\n');
+								counter++;
+							}
 						}
 
-						// Display condition code registers regardless of
-						// whether they have changed or not
-						MachineMain.machineView
-								.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
-						MachineMain.machineView.outputText("\t\t\t=\t=\t=\n");
-						MachineMain.machineView
-								.outputText("\t\t                         \t"
-										+ Utility
-												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-														.get('N'))
-										+ '\t'
-										+ Utility
-												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-														.get('Z'))
-										+ '\t'
-										+ Utility
-												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-														.get('P')) + '\n');
+						// If registers were altered, display them
+						if (regAltered[0] != null) {
+							// Register header
+							MachineMain.machineView
+									.outputText("\n\tRegister Number\tNew Register Contents\n");
+							MachineMain.machineView
+									.outputText("\t===============\t=====================\n");
+
+							// Register contents that have been altered are
+							// displayed
+							Integer counter = 0;
+							while (regAltered[counter] != null) {
+								MachineMain.machineView.outputText("\tR"
+										+ Utility.DecimalValueToHex(
+												regAltered[counter]).substring(
+												3)
+										+ "             \t\t"
+										+ MachineMain.machineModel.registerMap
+												.get(regAltered[counter])
+										+ '\n');
+
+								counter++;
+							}
+
+							// Display condition code registers regardless of
+							// whether they have changed or not
+							MachineMain.machineView
+									.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
+							MachineMain.machineView
+									.outputText("\t\t\t=\t=\t=\n");
+							MachineMain.machineView
+									.outputText("\t\t                         \t"
+											+ Utility
+													.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+															.get('N'))
+											+ '\t'
+											+ Utility
+													.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+															.get('Z'))
+											+ '\t'
+											+ Utility
+													.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+															.get('P')) + '\n');
+						}
+
+						instructionCount++;
 					}
 
-					instructionCount++;
+					// If the instruction limit was met, display error
+					if (instructionCount == MachineMain.machineModel.instructionLimit) {
+						MachineMain.machineView
+								.showError("Instruction Limit Reached.");
+					}
+
+					// Output final memory contents
+					displayFull(1);
+
+					// Output new instructions and change action listener to
+					// end.
+					MachineMain.machineView.outputText('\n' + endInst);
+					isExecuting = false;
+					MachineMain.machineView.setListener(trace, end);
 				}
-
-				// If the instruction limit was met, display error
-				if (instructionCount == MachineMain.machineModel.instructionLimit) {
-					MachineMain.machineView
-							.showError("Instruction Limit Reached.");
-				}
-
-				// Output final memory contents
-				displayFull(1);
-
-				// Output new instructions and change action listener to end.
-				MachineMain.machineView.outputText('\n' + endInst);
-				isExecuting = false;
-				MachineMain.machineView.setListener(trace, end);
 			}
 		}
 	}
@@ -774,146 +817,161 @@ public class Controller implements ControllerInterface {
 	 */
 	public class StepMode implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (!isExecuting) {
-				isExecuting = true;
-				// Output initial memory contents if the first instruction has
-				// not been executed
-				if (stepExecInst == 0) {
-					MachineMain.machineView.outputText("Executing...\n");
-					displayFull(0);
-				}
+			// Take in the input.
+			String text = MachineMain.machineView.getInput();
+			echoInput();
+			if (always(text)) {
+				if (!isExecuting) {
+					isExecuting = true;
+					// Output initial memory contents if the first instruction
+					// has
+					// not been executed
+					if (stepExecInst == 0) {
+						MachineMain.machineView.outputText("Executing...\n");
+						displayFull(0);
+					}
 
-				// Run the interpreter until the instruction limit is reached.
-				if (stepExecInst < MachineMain.machineModel.instructionLimit) {
-					// Display current program counter contents
-					MachineMain.machineView.outputText("\nProgram Counter: "
-							+ MachineMain.machineModel.programCounter);
+					// Run the interpreter until the instruction limit is
+					// reached.
+					if (stepExecInst < MachineMain.machineModel.instructionLimit) {
+						// Display current program counter contents
+						MachineMain.machineView
+								.outputText("\nProgram Counter: "
+										+ MachineMain.machineModel.programCounter);
 
-					// Create an instance of the interpreter
-					Interpreter interStep = new Interpreter();
+						// Create an instance of the interpreter
+						Interpreter interStep = new Interpreter();
 
-					// Execute an instruction and get information on what
-					// happened.
-					String executeError = interStep.ExecuteAnInstruction();
-					String instName = Interpreter.instruction;
+						// Execute an instruction and get information on what
+						// happened.
+						String executeError = interStep.ExecuteAnInstruction();
+						String instName = Interpreter.instruction;
 
-					// Display the instruction being executed
-					MachineMain.machineView.outputText("\n\nInstruction: "
-							+ instName + '\n');
+						// Display the instruction being executed
+						MachineMain.machineView.outputText("\n\nInstruction: "
+								+ instName + '\n');
 
-					// Check if the loader returned an error finding the file.
-					if (executeError != null) {
-						// Execute trap or debug instructions if they occurred
-						if (executeError.substring(0, 4).equals("TRAP")) {
-							// Execute the trap
-							String trapError = executeTrap(executeError);
+						// Check if the loader returned an error finding the
+						// file.
+						if (executeError != null) {
+							// Execute trap or debug instructions if they
+							// occurred
+							if (executeError.substring(0, 4).equals("TRAP")) {
+								// Execute the trap
+								String trapError = executeTrap(executeError);
 
-							// Check for errors or HALT command.
-							if (trapError != null) {
-								if (trapError.equals("HALT")) {
-									isEnd = true;
-								} else {
-									MachineMain.machineView
-											.outputText(trapError + '\n');
+								// Check for errors or HALT command.
+								if (trapError != null) {
+									if (trapError.equals("HALT")) {
+										isEnd = true;
+									} else {
+										MachineMain.machineView
+												.outputText(trapError + '\n');
+									}
 								}
+							} else if (executeError.substring(0, 4).equals(
+									"DBUG")) {
+								// Display registers if DBUG instruction occurs.
+								displayAllRegisters();
+							} else if (Utility.isHexString(executeError
+									.substring(0, 4))) {
+								// Program counter was altered successfully.
+							} else {
+								MachineMain.machineView
+										.outputText(executeError + '\n');
 							}
-						} else if (executeError.substring(0, 4).equals("DBUG")) {
-							// Display registers if DBUG instruction occurs.
-							displayAllRegisters();
-						} else if (Utility.isHexString(executeError.substring(
-								0, 4))) {
-							// Program counter was altered successfully.
-						} else {
+						}
+						String[] memAltered = Interpreter.memoryChanges;
+						Integer[] regAltered = Interpreter.registerChanges;
+						// If memory was altered, display it
+						if (memAltered[0] != null) {
+							// Memory header
 							MachineMain.machineView
-									.outputText(executeError + '\n');
-						}
-					}
-					String[] memAltered = Interpreter.memoryChanges;
-					Integer[] regAltered = Interpreter.registerChanges;
-					// If memory was altered, display it
-					if (memAltered[0] != null) {
-						// Memory header
-						MachineMain.machineView
-								.outputText("\n\tMemory Address\tNew Memory Contents\n");
-						MachineMain.machineView
-								.outputText("\t==============\t===================\n");
-
-						// Memory contents that have been altered are displayed
-						Integer counter = 0;
-						while (memAltered[counter] != null) {
+									.outputText("\n\tMemory Address\tNew Memory Contents\n");
 							MachineMain.machineView
-									.outputText('\t'
-											+ memAltered[counter]
-											+ "          \t\t"
-											+ MachineMain.machineModel.memoryArray[Utility
-													.HexToDecimalValue(memAltered[counter])]
-											+ '\n');
-							counter++;
-						}
-					}
+									.outputText("\t==============\t===================\n");
 
-					// If registers were altered, display them
-					if (regAltered[0] != null) {
-						// Register header
-						MachineMain.machineView
-								.outputText("\n\tRegister Number\tNew Register Contents\n");
-						MachineMain.machineView
-								.outputText("\t===============\t=====================\n");
-
-						// Register contents that have been altered are
-						// displayed
-						Integer counter = 0;
-						while (regAltered[counter] != null) {
-							MachineMain.machineView.outputText("\tR"
-									+ Utility.DecimalValueToHex(
-											regAltered[counter]).substring(3)
-									+ "             \t\t"
-									+ MachineMain.machineModel.registerMap
-											.get(regAltered[counter]) + '\n');
-
-							counter++;
+							// Memory contents that have been altered are
+							// displayed
+							Integer counter = 0;
+							while (memAltered[counter] != null) {
+								MachineMain.machineView
+										.outputText('\t'
+												+ memAltered[counter]
+												+ "          \t\t"
+												+ MachineMain.machineModel.memoryArray[Utility
+														.HexToDecimalValue(memAltered[counter])]
+												+ '\n');
+								counter++;
+							}
 						}
 
-						// Display condition code registers regardless of
-						// whether they have changed or not
+						// If registers were altered, display them
+						if (regAltered[0] != null) {
+							// Register header
+							MachineMain.machineView
+									.outputText("\n\tRegister Number\tNew Register Contents\n");
+							MachineMain.machineView
+									.outputText("\t===============\t=====================\n");
+
+							// Register contents that have been altered are
+							// displayed
+							Integer counter = 0;
+							while (regAltered[counter] != null) {
+								MachineMain.machineView.outputText("\tR"
+										+ Utility.DecimalValueToHex(
+												regAltered[counter]).substring(
+												3)
+										+ "             \t\t"
+										+ MachineMain.machineModel.registerMap
+												.get(regAltered[counter])
+										+ '\n');
+
+								counter++;
+							}
+
+							// Display condition code registers regardless of
+							// whether they have changed or not
+							MachineMain.machineView
+									.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
+							MachineMain.machineView
+									.outputText("\t\t\t=\t=\t=\n");
+							MachineMain.machineView
+									.outputText("\t\t                         \t"
+											+ Utility
+													.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+															.get('N'))
+											+ '\t'
+											+ Utility
+													.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+															.get('Z'))
+											+ '\t'
+											+ Utility
+													.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
+															.get('P')) + '\n');
+						}
+					} else {
 						MachineMain.machineView
-								.outputText("\n\tCondition Code Registers:\tN\tZ\tP\n");
-						MachineMain.machineView.outputText("\t\t\t=\t=\t=\n");
-						MachineMain.machineView
-								.outputText("\t\t                         \t"
-										+ Utility
-												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-														.get('N'))
-										+ '\t'
-										+ Utility
-												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-														.get('Z'))
-										+ '\t'
-										+ Utility
-												.BooleanToString(MachineMain.machineModel.conditionCodeRegisters
-														.get('P')) + '\n');
+								.showError("Instruction Limit Reached.");
+						isEnd = true;
 					}
-				} else {
-					MachineMain.machineView
-							.showError("Instruction Limit Reached.");
-					isEnd = true;
-				}
 
-				if (isEnd) {
-					// Output final memory contents
-					displayFull(1);
+					if (isEnd) {
+						// Output final memory contents
+						displayFull(1);
 
-					// Output new instructions and change action listener to
-					// end.
-					MachineMain.machineView.outputText('\n' + endInst);
-					isExecuting = false;
-					isEnd = false;
-					MachineMain.machineView.setListener(step, end);
-				} else {
-					stepExecInst++;
-					MachineMain.machineView
-							.outputText("\nPress enter to continue execution.\n\n");
-					isExecuting = false;
+						// Output new instructions and change action listener to
+						// end.
+						MachineMain.machineView.outputText('\n' + endInst);
+						isExecuting = false;
+						isEnd = false;
+						MachineMain.machineView.setListener(step, end);
+					} else {
+						stepExecInst++;
+						MachineMain.machineView
+								.outputText("\nPress enter to continue execution.\n\n");
+						isExecuting = false;
+					}
 				}
 			}
 		}
@@ -937,27 +995,60 @@ public class Controller implements ControllerInterface {
 			// Take in the input.
 			String text = MachineMain.machineView.getInput();
 			echoInput();
+			if (always(text)) {
 
-			if (text.equals("a") || text.equals("A")) {
-				// Display instructions and change action listener to getFile
-				MachineMain.machineView.outputText(getFileInst2);
-				MachineMain.machineModel.fileLocation = null;
-				MachineMain.machineView.setListener(end, getFile);
-			} else if (text.equals("b") || text.equals("B")) {
-				// Restart Wileven Machine
-				MachineMain.machineView.dispose();
-				String emptyString = null;
-				MachineMain.Reset(emptyString);
-			} else if (text.equals("c") || text.equals("C")) {
-				// Close Wileven Machine
-				System.exit(0);
-			} else {
-				// Display error and instructions again.
-				MachineMain.machineView
-						.showError("Invalid response. Valid responses: A, B, C");
-				MachineMain.machineView.outputText(endInst);
+				if (text.equals("a") || text.equals("A")) {
+					// Display instructions and change action listener to
+					// getFile
+					MachineMain.machineView.outputText(getFileInst2);
+					MachineMain.machineModel.fileLocation = null;
+					MachineMain.machineView.setListener(end, getFile);
+				} else if (text.equals("b") || text.equals("B")) {
+					// Restart Wileven Machine
+					MachineMain.machineView.dispose();
+					String emptyString = null;
+					MachineMain.Reset(emptyString);
+				} else if (text.equals("c") || text.equals("C")) {
+					// Close Wileven Machine
+					System.exit(0);
+				} else {
+					// Display error and instructions again.
+					MachineMain.machineView
+							.showError("Invalid response. Valid responses: A, B, C");
+					MachineMain.machineView.outputText(endInst);
+				}
 			}
 		}
+	}
+
+	/**
+	 * Performs a special action, such as quit or restart.
+	 * 
+	 * @author Ben Trivett
+	 */
+	public Boolean always(String text) {
+		if (text.toLowerCase().equals("load")) {
+			// Display instructions and change action listener to getFile
+			MachineMain.machineView.outputText(getFileInst2);
+			MachineMain.machineModel.fileLocation = null;
+			MachineMain.machineView.removeAllListeners();
+			MachineMain.machineView.setListener(null, getFile);
+			return false;
+		} else if (text.toLowerCase().equals("restart")) {
+			// Restart Wileven Machine
+			MachineMain.machineView.dispose();
+			String emptyString = null;
+			MachineMain.Reset(emptyString);
+			return false;
+		} else if (text.toLowerCase().equals("quit")) {
+			// Close Wileven Machine
+			System.exit(0);
+		} else if (text.toLowerCase().equals("memdump")){
+			// Memory dump
+			displayFull(2);
+			return false;
+		}
+		return true;
 	}
 
 	/*
