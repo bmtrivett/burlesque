@@ -177,12 +177,12 @@ public class LLPassTwo {
 				} else if (read.charAt(0) == 'X') {
 					// Update the last 9 bits with the value of the external
 					// symbol
-					String extSymbol = read.substring(10);
+					String extSymbol = read.substring(9);
 					if (WilevenLoader.machineTables.externalSymbolTable
 							.containsKey(extSymbol)) {
 						extSymbol = WilevenLoader.machineTables.externalSymbolTable
 								.get(extSymbol);
-						read = read.substring(0, 10);
+						read = read.substring(0, 9);
 					} else {
 						return "The external symbol " + extSymbol
 								+ " was not defined in " + names[count] + ".";
