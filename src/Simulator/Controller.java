@@ -40,8 +40,8 @@ public class Controller implements ControllerInterface {
 			+ "A) Quiet mode.\nB) Trace mode.\nC) Step mode.\n";
 	private String optionsInst = "New instruction limit (1 to 2,147,483,647 "
 			+ "or -1 for DEFAULT):\n";
-	private String endInst = "Execution over, please choose an option:\n"
-			+ "A) Load another file.\n" + "B) Reset Wileven Machine.\n"
+	private String endInst = "\nExecution over, please choose an option:\n"
+			+ "A) Load another file.\n" + "B) Restart Wileven Machine.\n"
 			+ "C) Quit.\n";
 	private String execInst = "Press enter to start ";
 
@@ -553,19 +553,19 @@ public class Controller implements ControllerInterface {
 				if (text.equals("a") || text.equals("A")) {
 					// Display instructions and change action listener to quiet
 					MachineMain.machineView.outputText(execInst
-							+ MachineMain.machineModel.programName + ".\n\n");
+							+ MachineMain.machineModel.programName + ".\n");
 					MachineMain.machineView.setListener(modeSelect, quiet);
 				} else if (text.equals("b") || text.equals("B")) {
 					// Display instructions and change action listener to trace
 					MachineMain.machineView.outputText(execInst
-							+ MachineMain.machineModel.programName + ".\n\n");
+							+ MachineMain.machineModel.programName + ".\n");
 					MachineMain.machineView.setListener(modeSelect, trace);
 				} else if (text.equals("c") || text.equals("C")) {
 					// Set step instruction counter to 0.
 					stepExecInst = 0;
 					// Display instructions and change action listener to step
 					MachineMain.machineView.outputText(execInst
-							+ MachineMain.machineModel.programName + ".\n\n");
+							+ MachineMain.machineModel.programName + ".\n");
 					MachineMain.machineView.setListener(modeSelect, step);
 				} else {
 					// Display error and instructions again.
@@ -592,7 +592,7 @@ public class Controller implements ControllerInterface {
 
 				if (!isExecuting) {
 					isExecuting = true;
-					MachineMain.machineView.outputText("Executing...\n");
+					MachineMain.machineView.outputText("Executing...\n\n");
 
 					// Run the interpreter until the instruction limit is
 					// reached.
@@ -659,7 +659,7 @@ public class Controller implements ControllerInterface {
 			if (always(text)) {
 				if (!isExecuting) {
 					isExecuting = true;
-					MachineMain.machineView.outputText("Executing...\n");
+					MachineMain.machineView.outputText("Executing...\n\n");
 					// Output initial memory contents
 					displayFull(0);
 
@@ -827,7 +827,7 @@ public class Controller implements ControllerInterface {
 					// has
 					// not been executed
 					if (stepExecInst == 0) {
-						MachineMain.machineView.outputText("Executing...\n");
+						MachineMain.machineView.outputText("Executing...\n\n");
 						displayFull(0);
 					}
 
