@@ -40,6 +40,7 @@ public class LLPassTwo {
 		// append FINAL to end of first file's name for the output file.
 		int firstFileIndex = firstFile.indexOf(".o");
 		firstFile = firstFile.substring(0, firstFileIndex) + "FINAL.o";
+		WilevenLoader.outputFileName = firstFile;
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(
 				firstFile));
 

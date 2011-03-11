@@ -21,6 +21,7 @@ public class WilevenLoader {
 	public static int totalSegLength = 0;
 	public static Tables machineTables;
 	public static Boolean warnings = true;
+	public static String outputFileName = "";
 
 	/**
 	 * @param args
@@ -84,16 +85,18 @@ public class WilevenLoader {
 			System.exit(0);
 		}
 
-//		// Execute pass two.
-//		String secondPassError = PassTwo.output(fileNames[1], fileNames[2],
-//				machineTables);
-//
-//		// If the second pass ended abruptly and returned an error, display it
-//		// and exit.
-//		if (secondPassError != null) {
-//			System.out.println("ERROR: " + secondPassError);
-//			System.exit(0);
-//		}
+		// Execute pass two.
+		String secondPassError = LLPassTwo.output(fileNames);
+
+		// If the second pass ended abruptly and returned an error, display it
+		// and exit.
+		if (secondPassError != null) {
+			System.out.println("ERROR: " + secondPassError);
+			System.exit(0);
+		}
+		
+		// Call the simulator with the file name outputed by pass two
+		Simulator.MachineMain.Reset(outputFileName);
 	}
 	/**
 	 * Makes sure there is at least one argument. If not, it produces an error
