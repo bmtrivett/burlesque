@@ -14,6 +14,8 @@ import Assembler.Utility;
  */
 public class LLPassOne {
 	/**
+	 * takes in multiple objec files and builds a external symbol table 
+	 * to be used in pass two.
 	 * 
 	 * @param names
 	 * @return
@@ -101,6 +103,9 @@ public class LLPassOne {
 	}
 
 	/**
+	 * 
+	 * This method checks that the final operand can be an address for certain
+	 * relocatable symbols.
 	 * 
 	 * @param str
 	 * @param x

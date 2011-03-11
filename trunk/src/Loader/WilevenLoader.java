@@ -12,7 +12,7 @@ import Assembler.Tables;
 /**
  * This class controls the loader and displays errors that occur.
  * 
- * @author Ben Trivett
+ * @author Ben Trivett, Gerard Louis
  */
 public class WilevenLoader {
 
